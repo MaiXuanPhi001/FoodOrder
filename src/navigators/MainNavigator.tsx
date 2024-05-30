@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import AreaAndTable from '~/screens/area/AreaAndTable';
+import AreaAndTable from '~/screens/areaAndTable/AreaAndTable';
 
 export type MainStackParamList = {
     AreaAndTable: undefined;
