@@ -1,9 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import Area from '~/screens/area/Area';
+import AreaAndTable from '~/screens/area/AreaAndTable';
 
 export type MainStackParamList = {
-    Area: undefined;
+    AreaAndTable: undefined;
 }
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
@@ -11,7 +11,7 @@ const Stack = createNativeStackNavigator<MainStackParamList>();
 const MainNavigator = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name={'Area'} component={Area} />
+            <Stack.Screen name={'AreaAndTable'} component={AreaAndTable} />
         </Stack.Navigator>
     )
 }

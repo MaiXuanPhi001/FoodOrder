@@ -1,30 +1,28 @@
 import React from 'react'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
-import { Area } from '~/servers/databases/area'
+import { Area } from '~/servers/databases/areas'
 import { colors } from '~/themes/colors'
-import { width } from '~/utils/responsive'
-import { GAP, PADDING, WIDTH_LIST_ITEM } from './Area'
+import { ResponsiveArea } from '~/models/responsive'
+import { Table } from '~/servers/databases/tables'
 
 interface Props {
-    area: Area
+    table: Table
+    useResponsive: ResponsiveArea
 }
 
-const ItemArea = ({ area }: Props) => {
-    const ITEM_ON_LINE = 6
-    const widthItem = (WIDTH_LIST_ITEM - GAP)  / ITEM_ON_LINE - PADDING
-    // 90 => 30   100
+const ItemArea = ({ table, useResponsive }: Props) => {
     return (
         <TouchOpacity
             center
             borderWidth={1}
-            w={widthItem}
-            h={widthItem}
+            w={useResponsive.widthItem}
+            h={useResponsive.widthItem}
             bg={colors.white}
             radius={2}
             borderColor={colors.borderItem}
         >
-            <Txt>{area.name}</Txt>
+            <Txt>{table.name}</Txt>
         </TouchOpacity>
     )
 }
