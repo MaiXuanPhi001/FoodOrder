@@ -1,24 +1,27 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Alarm } from 'iconsax-react-native'
 import React, { useEffect } from 'react'
 import Box from '~/atoms/Box'
 import Txt from '~/atoms/Txt'
-import { RootStackParamList } from '~/navigators/Navigation'
-import { colors } from '~/themes/colors'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { storages } from '~/constants/storages'
-import { delay } from '~/utils/promise'
 import { useAppDispatch } from '~/hooks/redux'
-import { setAreas } from '~/reduxs/slices/mainSlice'
-import { Area } from '~/servers/databases/areas'
+import { RootStackParamList } from '~/navigators/Navigation'
+import { setFirstData } from '~/reduxs/slices/mainSlice'
+import { Area, areas } from '~/servers/databases/areas'
+import { Food, foods } from '~/servers/databases/foods'
 import { Table, tables } from '~/servers/databases/tables'
+import { colors } from '~/themes/colors'
+import { delay } from '~/utils/promise'
 
 const Hello = () => {
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   useEffect(() => {
+    handleSetAreas()
+    handleSetFoods()
     handleGetData()
   }, [])
 
@@ -29,16 +32,26 @@ const Hello = () => {
     // Lấy danh sách bàn
     const tablesJSON = await AsyncStorage.getItem(storages.tables) || '[]'
     const tables: Table[] = JSON.parse(tablesJSON)
-    console.log('tables: ', tables)
-    // Set data cho areas trong redux slice 
-    dispatch(setAreas({ areas, tables }))
+    // Lấy danh sách thức ăn
+    const foodsJSON = await AsyncStorage.getItem(storages.foods) || '[]'
+    const foods: Food[] = JSON.parse(foodsJSON)
+    // Set data areas & table & foods trong redux slice 
+    dispatch(setFirstData({ areas, tables, foods }))
     // Sau 1 giây chuyển sang màn hình MainNavigator
     await delay(1000)
-    navigation.navigate('MainNavigator')
+    navigation.replace('MainNavigator')
   }
 
   const handleSetTable = async () => {
     await AsyncStorage.setItem(storages.tables, JSON.stringify(tables))
+  }
+
+  const handleSetAreas = async () => {
+    await AsyncStorage.setItem(storages.areas, JSON.stringify(areas))
+  }
+
+  const handleSetFoods = async () => {
+    await AsyncStorage.setItem(storages.foods, JSON.stringify(foods))
   }
 
   return (

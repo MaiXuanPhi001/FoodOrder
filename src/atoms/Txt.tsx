@@ -25,6 +25,7 @@ interface Props {
     right?: number
     bottom?: number
     left?: number
+    textAlign?: 'auto' | 'center' | 'right' | 'left' | 'justify' | undefined
     styles?: StyleProp<TextStyle>
     children?: Element
 }
@@ -52,6 +53,7 @@ const Txt: React.FC<Props & TextProps> = ({
     right,
     bottom,
     left,
+    textAlign,
     styles,
     children,
     ...rest
@@ -79,6 +81,7 @@ const Txt: React.FC<Props & TextProps> = ({
             right,
             bottom,
             left,
+            textAlign,
         },
         bold && { fontWeight: 'bold' }
     ]

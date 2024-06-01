@@ -9,11 +9,13 @@ import { Table } from '~/servers/databases/tables'
 interface Props {
     table: Table
     useResponsive: ResponsiveArea
+    onMoveOrderScreen: (table: Table) => void
 }
 
-const ItemArea = ({ table, useResponsive }: Props) => {
+const ItemTable = ({ table, useResponsive, onMoveOrderScreen }: Props) => {
     return (
         <TouchOpacity
+            onPress={() => onMoveOrderScreen(table)}
             center
             borderWidth={1}
             w={useResponsive.widthItem}
@@ -27,4 +29,4 @@ const ItemArea = ({ table, useResponsive }: Props) => {
     )
 }
 
-export default ItemArea
+export default ItemTable

@@ -1,45 +1,50 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Area } from "~/servers/databases/areas";
+import { Food } from "~/servers/databases/foods";
 import { Table } from "~/servers/databases/tables";
 
 interface MainSlice {
     areas: Area[]
     tables: Table[]
+    foods: Food[]
     areaChoose: Area | undefined
 }
 
 interface PayloadSetAreas {
     areas: Area[]
     tables: Table[]
+    foods: Food[]
 }
 
 const initialState: MainSlice = {
-    areas: [], // danh sách khu vực
-    tables: [], // danh sách bàn
-    areaChoose: undefined // khu vực được chọn
+    areas: [], // Danh sách khu vực
+    tables: [], // Danh sách bàn
+    foods: [], // Danh sách thức ăn
+    areaChoose: undefined // Khu vực được chọn
 }
 
 const mainSlice = createSlice({
     name: 'area',
     initialState,
     reducers: {
-        setAreas: (state, action: PayloadAction<PayloadSetAreas>) => {
+        setFirstData: (state, action: PayloadAction<PayloadSetAreas>) => {
             const { payload } = action
             state.areas = payload.areas
+            state.tables = payload.tables
+            state.foods = payload.foods
             if (payload.areas.length > 0) {
                 state.areaChoose = payload.areas[0]
-                state.tables = payload.tables
             } else {
                 state.areaChoose = undefined
             }
         },
         setAreaChoose: (state, action: PayloadAction<Area>) => {
             state.areaChoose = action.payload
-        }
+        },
     },
     extraReducers: builder => { }
 })
 
-export const { setAreas, setAreaChoose } = mainSlice.actions
+export const { setFirstData, setAreaChoose } = mainSlice.actions
 
 export default mainSlice.reducer

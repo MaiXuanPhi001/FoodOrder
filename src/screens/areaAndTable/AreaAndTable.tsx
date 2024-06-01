@@ -5,21 +5,30 @@ import { useResponsiveArea } from '~/hooks/responsive'
 import { Area as AreaInter, areas } from '~/servers/databases/areas'
 import { colors } from '~/themes/colors'
 import Header from './Header'
-import ItemArea from './ItemArea'
+import ItemTable from './ItemTable'
 import { useAppSelector } from '~/hooks/redux'
 import { areaChooseMainSelector, tablesMainSelector } from '~/reduxs/selectors/mainSelector'
 import { Table } from '~/servers/databases/tables'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { MainStackParamList } from '~/navigators/MainNavigator'
 
 const Area = () => {
     const useResponsive = useResponsiveArea()
     const areaChoose = useAppSelector(areaChooseMainSelector)
     const tables = useAppSelector(tablesMainSelector)
+    const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>()
 
     const tablesByArea = tables.filter(table => table._idArea === areaChoose?._id)
 
+    // Di chuyển đến màn hình order của một bàn
+    const handleMoveOrderScreen = (table: Table) => {
+        navigation.navigate('Order', { table: table })
+    }
+
     return (
         <Box f={1} bg={colors.gray}>
-            <Header />
+            <Header useResponsive={useResponsive} />
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Box
                     row
@@ -30,10 +39,11 @@ const Area = () => {
                     w={useResponsive.widthListItem}
                 >
                     {tablesByArea.map((table: Table) =>
-                        <ItemArea
+                        <ItemTable
                             key={table._id}
                             table={table}
                             useResponsive={useResponsive}
+                            onMoveOrderScreen={handleMoveOrderScreen}
                         />
                     )}
                 </Box>

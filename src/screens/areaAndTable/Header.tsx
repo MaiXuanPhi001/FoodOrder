@@ -1,6 +1,6 @@
 import { Setting } from 'iconsax-react-native';
 import React, { useCallback } from 'react';
-import { Alert, StyleSheet } from 'react-native';
+import { Alert, ScrollView, StyleSheet } from 'react-native';
 import {
   Menu,
   MenuOption,
@@ -10,6 +10,7 @@ import {
 import Box from '~/atoms/Box';
 import Txt from '~/atoms/Txt';
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
+import { ResponsiveArea } from '~/models/responsive';
 import { areasMainSelector, areaChooseMainSelector } from '~/reduxs/selectors/mainSelector';
 import { setAreaChoose } from '~/reduxs/slices/mainSlice';
 import { Area } from '~/servers/databases/areas';
@@ -17,11 +18,16 @@ import { colors } from '~/themes/colors';
 
 const heightContainer = 50
 
-const Header = () => {
+interface Props {
+  useResponsive: ResponsiveArea
+}
+
+const Header = ({ useResponsive }: Props) => {
   const dispatch = useAppDispatch()
   const areas = useAppSelector(areasMainSelector)
   const areaChoose = useAppSelector(areaChooseMainSelector)
 
+  // Khu vực được chọn
   const handleSetAreaChoose = (area: Area) => {
     dispatch(setAreaChoose(area))
   }
@@ -33,15 +39,17 @@ const Header = () => {
           <Txt>{areaChoose?.name || 'Chưa có khu vực nào'}</Txt>
         </MenuTrigger>
         <MenuOptions>
-          {areas.map((area: Area) =>
-            <MenuOption
-              key={area._id}
-              onSelect={() => handleSetAreaChoose(area)}
-              style={styles.menuOption}
-            >
-              <Txt>{area.name}</Txt>
-            </MenuOption>
-          )}
+          <ScrollView style={{ height: useResponsive.heightScrollPoppupMenu }}>
+            {areas.map((area: Area) =>
+              <MenuOption
+                key={area._id}
+                onSelect={() => handleSetAreaChoose(area)}
+                style={[styles.menuOption, {height: useResponsive.heightItemMenuOption}]}
+              >
+                <Txt>{area.name}</Txt>
+              </MenuOption>
+            )}
+          </ScrollView>
         </MenuOptions>
       </Menu>
 
@@ -60,7 +68,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menuOption: {
-    height: 50,
     justifyContent: 'center'
   }
 })
