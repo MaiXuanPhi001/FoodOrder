@@ -8,6 +8,7 @@ interface MainSlice {
     tables: Table[]
     foods: Food[]
     areaChoose: Area | undefined
+    orderedTab: boolean
 }
 
 interface PayloadSetAreas {
@@ -20,7 +21,8 @@ const initialState: MainSlice = {
     areas: [], // Danh sách khu vực
     tables: [], // Danh sách bàn
     foods: [], // Danh sách thức ăn
-    areaChoose: undefined // Khu vực được chọn
+    areaChoose: undefined, // Khu vực được chọn
+    orderedTab: false // Tab order
 }
 
 const mainSlice = createSlice({
@@ -41,10 +43,17 @@ const mainSlice = createSlice({
         setAreaChoose: (state, action: PayloadAction<Area>) => {
             state.areaChoose = action.payload
         },
+        setOrderedTab: (state, action: PayloadAction<boolean>) => {
+            state.orderedTab = action.payload
+        }
     },
     extraReducers: builder => { }
 })
 
-export const { setFirstData, setAreaChoose } = mainSlice.actions
+export const {
+    setFirstData,
+    setAreaChoose,
+    setOrderedTab,
+} = mainSlice.actions
 
 export default mainSlice.reducer

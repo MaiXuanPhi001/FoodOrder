@@ -41,6 +41,7 @@ interface Props {
     borderBottomRightRadius?: number
     borderBottomLeftRadius?: number
     borderWidth?: number
+    borderBottomWidth?: number
     borderColor?: string
     zIndex?: number
     overflow?: "visible" | "hidden" | "scroll"
@@ -88,6 +89,7 @@ const Box: React.FC<Props & ViewProps> = ({
     borderBottomRightRadius,
     borderBottomLeftRadius,
     borderWidth,
+    borderBottomWidth,
     borderColor,
     zIndex,
     overflow,
@@ -132,6 +134,7 @@ const Box: React.FC<Props & ViewProps> = ({
             borderTopRightRadius,
             borderBottomRightRadius,
             borderBottomLeftRadius,
+            borderBottomWidth,
             borderWidth,
             borderColor,
             zIndex,

@@ -7,22 +7,25 @@ import { foodsMainSelector } from '~/reduxs/selectors/mainSelector'
 import { Food } from '~/servers/databases/foods'
 import { colors } from '~/themes/colors'
 import ItemFood from './ItemFood'
+import { ResponsiveArea, ResponsiveOrder } from '~/models/responsive'
 
-const Foods = () => {
+interface Props {
+  useResponsive: ResponsiveOrder
+}
+
+const Foods = ({ useResponsive }: Props) => {
   const foods = useAppSelector(foodsMainSelector)
-  console.log('food: ', foods)
-  const useResponsive = useResponsiveOrder()
 
   return (
-    <Box f={1}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <Box w={useResponsive.widthFoods} h={useResponsive.heighFoods} bg={colors.gray}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}>
         <Box
           row
           wrap
-          bg={colors.gray}
           p={useResponsive.padding}
           gap={useResponsive.gap}
-          w={useResponsive.widthListItem}
         >
           {foods.map((food: Food) =>
             <ItemFood

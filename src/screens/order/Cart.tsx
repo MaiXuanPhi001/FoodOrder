@@ -1,10 +1,19 @@
 import React from 'react'
 import Box from '~/atoms/Box'
+import { ResponsiveOrder } from '~/models/responsive'
+import { colors } from '~/themes/colors'
+import Ordered from './Ordered'
+import FoodsOrder from './FoodsOrder'
 
-const Cart = () => {
+interface Props {
+    useResponsive: ResponsiveOrder
+}
+
+const Cart = ({ useResponsive }: Props) => {
     return (
-        <Box f={1} bg='blue'>
-
+        <Box w={useResponsive.widthOrder} bg={colors.white} h={useResponsive.heighOrder}>
+            <Ordered />
+            <FoodsOrder />
         </Box>
     )
 }
