@@ -11,11 +11,13 @@ import { colors } from '~/themes/colors'
 interface Props {
     food: Food
     useResponsive: ResponsiveOrder
+    onChooseFood: (food: Food) => void
 }
 
-const ItemFood = ({ food, useResponsive }: Props) => {
+const ItemFood = ({ food, useResponsive, onChooseFood }: Props) => {
     return (
         <TouchOpacity
+            onPress={() => onChooseFood(food)}
             borderWidth={1}
             w={useResponsive.widthItem}
             h={useResponsive.heightItem}
