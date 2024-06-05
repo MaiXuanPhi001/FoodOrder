@@ -2,7 +2,7 @@ export const optionFoods = [
     {
         _id: 0,
         title: 'Cấp độ',
-        maxchoose: 1,
+        maxChoose: 1,
         _idFood: 0,
     },
     {

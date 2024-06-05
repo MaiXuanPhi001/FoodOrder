@@ -5,3 +5,4 @@ export const areaChooseMainSelector = (state: RootState) => state.main.areaChoos
 export const tablesMainSelector = (state: RootState) => state.main.tables
 export const foodsMainSelector = (state: RootState) => state.main.foods
 export const orderedTabMainSelector = (state: RootState) => state.main.orderedTab
+export const foodOptionMainSelector = (state: RootState) => state.main.foodOption

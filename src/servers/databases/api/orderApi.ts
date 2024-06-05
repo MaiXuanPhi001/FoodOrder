@@ -10,7 +10,7 @@ export const getFoodDetailApi = (food: Food) => {
         ingredientsDB.forEach(ingredient => {
             if (ingredient._idOptionFood === option._id) {
                 const food = foods.filter((food) => ingredient._idFood === food._id)[0]
-                ingredients.push({ ...ingredient, food })
+                ingredients.push({ ...ingredient, food: {...food, amount: 0} })
             }
         })
         optionFoods[i] = { ...option, ingredients }
@@ -18,6 +18,7 @@ export const getFoodDetailApi = (food: Food) => {
 
     return {
         ...food,
-        options: optionFoods
+        options: optionFoods,
+        amount: 0,
     }
 }

@@ -9,6 +9,7 @@ interface MainSlice {
     foods: Food[]
     areaChoose: Area | undefined
     orderedTab: boolean
+    foodOption: any
 }
 
 interface PayloadSetAreas {
@@ -22,7 +23,8 @@ const initialState: MainSlice = {
     tables: [], // Danh sách bàn
     foods: [], // Danh sách thức ăn
     areaChoose: undefined, // Khu vực được chọn
-    orderedTab: false // Tab order
+    orderedTab: false, // Tab order
+    foodOption: undefined,
 }
 
 const mainSlice = createSlice({
@@ -45,7 +47,32 @@ const mainSlice = createSlice({
         },
         setOrderedTab: (state, action: PayloadAction<boolean>) => {
             state.orderedTab = action.payload
-        }
+        },
+        setFoodOption: (state, action) => {
+            state.foodOption = action.payload
+        },
+        setAmountFoodOption: (state, action) => {
+            const { ingredientChoose, optionChoose } = action.payload
+            state.foodOption.options.forEach(option => {
+                if (option._id === optionChoose._id) {
+                    console.log('======')
+                    let sum = 0
+                    option.ingredients.forEach(ingredient => {
+                        sum += ingredient.food.amount
+                    })
+
+                    console.log('sum: ', sum)
+                    console.log('maxchoose: ', option)
+                    if ((sum + 1) <= option.maxChoose) {
+                        option.ingredients.forEach(ingredient => {
+                            if (ingredient._id === ingredientChoose._id) {
+                                ingredient.food.amount++
+                            }
+                        })
+                    }
+                }
+            })
+        },
     },
     extraReducers: builder => { }
 })
@@ -54,6 +81,8 @@ export const {
     setFirstData,
     setAreaChoose,
     setOrderedTab,
+    setFoodOption,
+    setAmountFoodOption
 } = mainSlice.actions
 
 export default mainSlice.reducer

@@ -1,30 +1,32 @@
 import React, { useState } from 'react'
 import { ScrollView } from 'react-native'
 import Box from '~/atoms/Box'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { ResponsiveOrder } from '~/models/responsive'
-import { foodsMainSelector } from '~/reduxs/selectors/mainSelector'
+import { foodOptionMainSelector, foodsMainSelector } from '~/reduxs/selectors/mainSelector'
 import { Food } from '~/servers/databases/foods'
 import { colors } from '~/themes/colors'
 import ItemFood from './ItemFood'
 import ModalFoodOption from './ModalFoodOption'
 import { getFoodDetailApi } from '~/servers/databases/api/orderApi'
+import { setFoodOption } from '~/reduxs/slices/mainSlice'
 
 interface Props {
   useResponsive: ResponsiveOrder
 }
 
 const Foods = ({ useResponsive }: Props) => {
-  const [foodOption, setFoodOption] = useState(undefined)
+  const dispatch = useAppDispatch()
   const [isShowModalFoodOption, setShowModalFoodOption] = useState<boolean>(false)
 
   const foods = useAppSelector(foodsMainSelector)
+  const foodOption = useAppSelector(foodOptionMainSelector)
 
   // Event khi user nhấn vào ItemFood
   const handleChooseFood = (food: Food) => {
     setShowModalFoodOption(true)
     const foodOptionService = getFoodDetailApi(food)
-    setFoodOption(foodOptionService)
+    dispatch(setFoodOption(foodOptionService))
   }
 
   return (
@@ -49,6 +51,7 @@ const Foods = ({ useResponsive }: Props) => {
         </Box>
       </ScrollView>
       <ModalFoodOption
+        dispatch={dispatch}
         foodOption={foodOption}
         isShow={isShowModalFoodOption}
         setShow={setShowModalFoodOption}
