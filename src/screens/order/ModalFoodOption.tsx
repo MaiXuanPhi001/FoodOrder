@@ -1,6 +1,6 @@
 import { Dispatch, UnknownAction } from '@reduxjs/toolkit'
-import { Add, Alarm, CloseSquare, Minus, TickCircle } from 'iconsax-react-native'
-import React from 'react'
+import { Add, Alarm, BoxRemove, CloseCircle, CloseSquare, Minus, TickCircle, Trash } from 'iconsax-react-native'
+import React, { useState } from 'react'
 import { ScrollView } from 'react-native'
 import { ms, s } from 'react-native-size-matters'
 import Box from '~/atoms/Box'
@@ -8,7 +8,9 @@ import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
 import Modality from '~/components/Modality'
 import { setFoodOption, setAmountFoodOption } from '~/reduxs/slices/mainSlice'
+import { getFoodOptionByFood } from '~/servers/databases/api/orderApi'
 import { colors } from '~/themes/colors'
+import ModalFoodOptionChild from './ModalFoodOptionChild'
 
 interface Props {
     isShow: boolean
@@ -18,7 +20,8 @@ interface Props {
 }
 
 const ModalFoodOption = ({ isShow, setShow, foodOption, dispatch }: Props) => {
-    // console.log('orders: ', JSON.stringify(orders))
+    const [isShowModalFoodOption, setShowModalFoodOption] = useState<boolean>(false)
+    const [foodOptionChild, setFoodOptionChild] = useState(undefined)
 
     const handleMinusFood = () => {
         if (foodOption.amount > 1) {
@@ -48,7 +51,14 @@ const ModalFoodOption = ({ isShow, setShow, foodOption, dispatch }: Props) => {
         //         break
         //     }
         // }
-        dispatch(setAmountFoodOption({ingredientChoose, optionChoose}))
+        const foodOption = getFoodOptionByFood(ingredientChoose.food)
+        console.log('foodOption: ', JSON.stringify(foodOption))
+        if (foodOption) {
+            setFoodOptionChild(foodOption)
+            setShowModalFoodOption(true)
+        }
+
+        dispatch(setAmountFoodOption({ ingredientChoose, optionChoose }))
     }
 
     return (
@@ -57,7 +67,9 @@ const ModalFoodOption = ({ isShow, setShow, foodOption, dispatch }: Props) => {
                 {foodOption &&
                     <ScrollView>
                         <Box w={'100%'} jc='space-between' row ai='center' p={10}>
-                            <CloseSquare color={colors.background} />
+                            <TouchOpacity onPress={() => setShow(false)}>
+                                <CloseSquare color={colors.background} />
+                            </TouchOpacity>
                             <Txt bold>{foodOption.name}</Txt>
                             <TouchOpacity onPress={() => setShow(false)}>
                                 <TickCircle color={colors.background} />
@@ -87,10 +99,25 @@ const ModalFoodOption = ({ isShow, setShow, foodOption, dispatch }: Props) => {
                                             ai='center'
                                             m={5}
                                             w={s(70)}
+                                        // styles={{backgroundColor: 'red'}}
                                         >
-                                            <Alarm color={colors.gray2} size={ms(25)} />
-                                            <Txt>{ingredient.food.amount}</Txt>
-                                            <Txt size={s(12)}>{ingredient.food.name}</Txt>
+                                            <Alarm
+                                                color={ingredient.food.amount > 0 ? colors.background : colors.gray2}
+                                                size={ms(25)}
+                                            />
+                                            <Txt color={ingredient.food.amount > 0 ? colors.background : colors.black}>{ingredient.food.amount}</Txt>
+                                            <Txt
+                                                color={ingredient.food.amount > 0 ? colors.background : colors.black}
+                                                size={s(12)}
+                                                textAlign='center'
+                                            >
+                                                {ingredient.food.name}
+                                            </Txt>
+                                            {ingredient.food.amount > 0 &&
+                                                <TouchOpacity position='absolute' right={0} top={-5}>
+                                                    <CloseCircle size={18} color={colors.red} />
+                                                </TouchOpacity>
+                                            }
                                         </TouchOpacity>
                                     ))}
                                 </Box>
@@ -99,6 +126,13 @@ const ModalFoodOption = ({ isShow, setShow, foodOption, dispatch }: Props) => {
                     </ScrollView>
                 }
             </Box>
+
+            <ModalFoodOptionChild
+                dispatch={dispatch}
+                foodOption={foodOptionChild}
+                isShow={isShowModalFoodOption}
+                setShow={setShowModalFoodOption}
+            />
         </Modality>
     )
 }

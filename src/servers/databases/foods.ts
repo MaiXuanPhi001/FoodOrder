@@ -49,4 +49,11 @@ export const foods: Food[] = [
         type: 0,
         noteEnable: true,
     },
+    {
+        _id: 6,
+        name: 'Mì kim chi bò',
+        price: 25000,
+        type: 0,
+        noteEnable: true,
+    },
 ]

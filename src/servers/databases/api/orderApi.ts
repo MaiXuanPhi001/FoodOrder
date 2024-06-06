@@ -19,6 +19,15 @@ export const getFoodDetailApi = (food: Food) => {
     return {
         ...food,
         options: optionFoods,
-        amount: 0,
+        amount: 1,
     }
+}
+
+export const getFoodOptionByFood = (food) => {
+    const optionFoods = optionFoodsDB.filter((option) => option._idFood === food._id)
+    let foodOption = null
+    if (optionFoods.length > 0) {
+        foodOption =  getFoodDetailApi(food)
+    }
+    return foodOption
 }

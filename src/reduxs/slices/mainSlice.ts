@@ -55,14 +55,11 @@ const mainSlice = createSlice({
             const { ingredientChoose, optionChoose } = action.payload
             state.foodOption.options.forEach(option => {
                 if (option._id === optionChoose._id) {
-                    console.log('======')
                     let sum = 0
                     option.ingredients.forEach(ingredient => {
                         sum += ingredient.food.amount
                     })
 
-                    console.log('sum: ', sum)
-                    console.log('maxchoose: ', option)
                     if ((sum + 1) <= option.maxChoose) {
                         option.ingredients.forEach(ingredient => {
                             if (ingredient._id === ingredientChoose._id) {
