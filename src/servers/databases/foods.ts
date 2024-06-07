@@ -2,7 +2,7 @@ export interface Food {
     _id: number
     name: string
     price: number
-    type: number // 0: món ăn | 1 mì cay | 2 lẩu | 3 combo
+    type: number // 0: món ăn | 1 mì cay | 2 lẩu | 3 combo | 4 nước | 5 cấp độ cay
     noteEnable: boolean
 }
 
@@ -25,7 +25,7 @@ export const foods: Food[] = [
         _id: 2,
         name: 'Cấp 2',
         price: 0,
-        type: 4,
+        type: 5,
         noteEnable: false
     },
     {
@@ -53,7 +53,35 @@ export const foods: Food[] = [
         _id: 6,
         name: 'Mì kim chi bò',
         price: 25000,
-        type: 0,
+        type: 1,
         noteEnable: true,
+    },
+    {
+        _id: 7,
+        name: 'Cấp 0',
+        price: 0,
+        type: 5,
+        noteEnable: false
+    },
+    {
+        _id: 8,
+        name: 'Cấp 1',
+        price: 0,
+        type: 5,
+        noteEnable: false
+    },
+    {
+        _id: 9,
+        name: 'Coca',
+        price: 25000,
+        type: 4,
+        noteEnable: true
+    },
+    {
+        _id: 10,
+        name: 'Lẩu hải sản',
+        price: 207000,
+        type: 2,
+        noteEnable: true
     },
 ]

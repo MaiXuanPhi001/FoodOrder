@@ -14,7 +14,7 @@ export const optionFoods = [
     {
         _id: 2,
         title: '1 Mì kim chi bất kì',
-        maxChoose: 1,
+        maxChoose: 2,
         _idFood: 0,
     },
     {

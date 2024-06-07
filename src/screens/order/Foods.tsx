@@ -17,14 +17,12 @@ interface Props {
 
 const Foods = ({ useResponsive }: Props) => {
   const dispatch = useAppDispatch()
-  const [isShowModalFoodOption, setShowModalFoodOption] = useState<boolean>(false)
 
   const foods = useAppSelector(foodsMainSelector)
   const foodOption = useAppSelector(foodOptionMainSelector)
 
   // Event khi user nhấn vào ItemFood
   const handleChooseFood = (food: Food) => {
-    setShowModalFoodOption(true)
     const foodOptionService = getFoodDetailApi(food)
     dispatch(setFoodOption(foodOptionService))
   }
@@ -50,12 +48,13 @@ const Foods = ({ useResponsive }: Props) => {
           )}
         </Box>
       </ScrollView>
-      <ModalFoodOption
-        dispatch={dispatch}
-        foodOption={foodOption}
-        isShow={isShowModalFoodOption}
-        setShow={setShowModalFoodOption}
-      />
+      {foodOption &&
+        <ModalFoodOption
+          dispatch={dispatch}
+          foodOption={foodOption }
+          isShow={foodOption !== null}
+        />
+      }
     </Box>
   )
 }

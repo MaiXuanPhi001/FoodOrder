@@ -18,8 +18,8 @@ export const getFoodDetailApi = (food: Food) => {
 
     return {
         ...food,
-        options: optionFoods,
         amount: 1,
+        options: optionFoods,
     }
 }
 

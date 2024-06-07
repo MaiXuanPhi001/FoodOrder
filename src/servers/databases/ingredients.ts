@@ -39,4 +39,14 @@ export const ingredients = [
         _idOptionFood: 4,
         _idFood: 2,
     },
+    {
+        _id: 8,
+        _idOptionFood: 3,
+        _idFood: 7,
+    },
+    {
+        _id: 9,
+        _idOptionFood: 3,
+        _idFood: 8,
+    },
 ]
