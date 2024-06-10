@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { Alert } from "react-native";
 import { Area } from "~/servers/databases/areas";
 import { Food } from "~/servers/databases/foods";
 import { Table } from "~/servers/databases/tables";
@@ -8,10 +9,11 @@ interface MainSlice {
     tables: Table[]
     foods: Food[]
     areaChoose: Area | undefined
-    orderedTab: boolean
+    orderedTab: 'orderPending' | 'ordered'
     foodOption: any
     foodOptionChild: any
     optionChoose: any
+    orderPending: any
 }
 
 interface PayloadSetAreas {
@@ -25,10 +27,11 @@ const initialState: MainSlice = {
     tables: [], // Danh sách bàn
     foods: [], // Danh sách thức ăn
     areaChoose: undefined, // Khu vực được chọn
-    orderedTab: false, // Tab order
+    orderedTab: 'orderPending', // Tab order
     foodOption: null,
     foodOptionChild: null,
-    optionChoose: null
+    optionChoose: null,
+    orderPending: [],
 }
 
 const mainSlice = createSlice({
@@ -49,7 +52,7 @@ const mainSlice = createSlice({
         setAreaChoose: (state, action: PayloadAction<Area>) => {
             state.areaChoose = action.payload
         },
-        setOrderedTab: (state, action: PayloadAction<boolean>) => {
+        setOrderedTab: (state, action: PayloadAction<'orderPending' | 'ordered'>) => {
             state.orderedTab = action.payload
         },
         setFoodOption: (state, action) => {
@@ -75,12 +78,9 @@ const mainSlice = createSlice({
                 }
             })
         },
-        setFoodOptionChild: (state, action) => {
-            state.foodOptionChild = action.payload.foodOptionChild
-            state.optionChoose = action.payload.optionChoose
-        },
         setAmountFoodOptionChild: (state, action) => {
             const { ingredientChoose, optionChoose } = action.payload
+            const amountFoodOption = state.foodOptionChild.amount
             state.foodOptionChild.options.forEach(option => {
                 if (option._id === optionChoose._id) {
                     let sum = 0
@@ -88,7 +88,7 @@ const mainSlice = createSlice({
                         sum += ingredient.food.amount
                     })
 
-                    if ((sum + 1) <= option.maxChoose) {
+                    if ((sum + 1) <= (option.maxChoose * amountFoodOption)) {
                         option.ingredients.forEach(ingredient => {
                             if (ingredient._id === ingredientChoose._id) {
                                 ingredient.food.amount++
@@ -98,14 +98,18 @@ const mainSlice = createSlice({
                 }
             })
         },
+        setFoodOptionChild: (state, action) => {
+            state.foodOptionChild = action.payload.foodOptionChild
+            state.optionChoose = action.payload.optionChoose
+        },
         plusOrMinusFoodOptionChild: (state, action) => {
             const type = action.payload
+            const amountFoodOption = state.foodOption.amount
             if (type === 'plus') {
                 const amountCurrent = state.foodOptionChild.amount + 1
                 state.foodOption.options.forEach((option) => {
                     if (option._id === state.optionChoose._id) {
-                        console.log('maxChoose: ', option.maxChoose)
-                        if (amountCurrent <= option.maxChoose) {
+                        if (amountCurrent <= (option.maxChoose * amountFoodOption)) {
                             state.foodOptionChild.amount = amountCurrent
                         }
                     }
@@ -120,21 +124,108 @@ const mainSlice = createSlice({
         doneSelectFoodOptionChild: (state, action) => {
             console.log('doneSelectFoodOptionChild: ', JSON.stringify(state.foodOptionChild))
             // Hàm check xem chọn đủ thành phần của một món ăn chưa, vd: mì cay phải chọn cấp độ mới cho hoàn thành
-            if (true) {
-
+            let error = false
+            if (state.foodOptionChild.amount < 1) {
+                Alert.alert('Số lượng món phải lớn hơn 0')
+                return
             }
+
+            state.foodOptionChild.options.forEach((option) => {
+                const maxChoose = option.maxChoose
+                let sumAmountIngredients = 0
+                option.ingredients.forEach((ingredient) => {
+                    sumAmountIngredients += ingredient.food.amount
+                })
+
+                if (sumAmountIngredients !== (maxChoose * state.foodOptionChild.amount)) {
+                    Alert.alert('Vui lòng chọn đủ thành phần của món')
+                    error = true
+                }
+            })
+
+            if (error) return
+
+            const amountFoodOptionChild = state.foodOptionChild.amount
+            let sumAmountIngredients = 0
+            let position = -1
             state.foodOption.options.forEach((option) => {
                 if (option._id === state.optionChoose._id) {
-                    option.ingredients.forEach((ingredient) => {
+                    option.ingredients.forEach((ingredient, index) => {
+                        if (ingredient.food._id !== state.foodOptionChild._id) {
+                            sumAmountIngredients += ingredient.food.amount
+                        }
+
                         if (ingredient.food._id === state.foodOptionChild._id) {
-                            ingredient.food = state.foodOptionChild
+                            position = index
+                        }
+                    })
+
+                    if ((sumAmountIngredients + amountFoodOptionChild) > (state.optionChoose.maxChoose * state.foodOption.amount)) {
+                        Alert.alert('Vượt quá số lượng món trong một mục')
+                    } else {
+                        option.ingredients[position].food = state.foodOptionChild
+                    }
+                    state.foodOptionChild = null
+                }
+            })
+        },
+        removeIngredientsFoodOption: (state, action) => {
+            const { ingredientChoose, optionChoose } = action.payload
+            state.foodOption.options.forEach((option) => {
+                if (option._id === optionChoose._id) {
+                    option.ingredients.forEach((ingredient, index) => {
+                        if (ingredient._id === ingredientChoose._id) {
+                            if (ingredientChoose.food.options) {
+                                delete ingredient.food.options
+                            }
+                            ingredient.food.amount = 0
                         }
                     })
                 }
             })
-            state.foodOptionChild = null
-            console.log('done: ', JSON.stringify(state.foodOption))
-        }
+        },
+        removeIngredientsFoodOptionChild: (state, action) => {
+            const { ingredientChoose, optionChoose } = action.payload
+            state.foodOptionChild.options.forEach((option) => {
+                if (option._id === optionChoose._id) {
+                    option.ingredients.forEach((ingredient, index) => {
+                        if (ingredient._id === ingredientChoose._id) {
+                            if (ingredientChoose.food.options) {
+                                delete ingredient.food.options
+                            }
+                            ingredient.food.amount = 0
+                        }
+                    })
+                }
+            })
+        },
+        doneSelectFoodOption: (state) => {
+            console.log('foodOption: ', JSON.stringify(state.foodOption))
+
+            let error = false
+            if (state.foodOption.amount < 1) {
+                Alert.alert('Số lượng món phải lớn hơn 0')
+                return
+            }
+
+            state.foodOption.options.forEach((option) => {
+                const maxChoose = option.maxChoose
+                let sumAmountIngredients = 0
+                option.ingredients.forEach((ingredient) => {
+                    sumAmountIngredients += ingredient.food.amount
+                })
+
+                if (sumAmountIngredients !== (maxChoose * state.foodOption.amount)) {
+                    Alert.alert('Vui lòng chọn đủ thành phần của món')
+                    error = true
+                }
+            })
+
+            if (error) return
+
+            state.orderPending.push(state.foodOption)
+            state.foodOption = null
+        },
     },
     extraReducers: builder => { }
 })
@@ -149,6 +240,9 @@ export const {
     setAmountFoodOptionChild,
     plusOrMinusFoodOptionChild,
     doneSelectFoodOptionChild,
+    removeIngredientsFoodOption,
+    removeIngredientsFoodOptionChild,
+    doneSelectFoodOption,
 } = mainSlice.actions
 
 export default mainSlice.reducer

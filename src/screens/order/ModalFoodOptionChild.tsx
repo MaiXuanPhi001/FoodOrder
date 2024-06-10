@@ -4,12 +4,14 @@ import React from 'react'
 import { ScrollView } from 'react-native'
 import { ms, s } from 'react-native-size-matters'
 import Box from '~/atoms/Box'
+import Img from '~/atoms/Img'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
 import Modality from '~/components/Modality'
-import { setFoodOption, setAmountFoodOption, setFoodOptionChild, setAmountFoodOptionChild, plusOrMinusFoodOptionChild, doneSelectFoodOptionChild } from '~/reduxs/slices/mainSlice'
+import { setFoodOption, setAmountFoodOption, setFoodOptionChild, setAmountFoodOptionChild, plusOrMinusFoodOptionChild, doneSelectFoodOptionChild, removeIngredientsFoodOptionChild } from '~/reduxs/slices/mainSlice'
 import { getFoodDetailApi, getFoodOptionByFood } from '~/servers/databases/api/orderApi'
 import { colors } from '~/themes/colors'
+import { getImageByFoodType } from '~/utils/images'
 
 interface Props {
     isShow: boolean
@@ -25,6 +27,10 @@ const ModalFoodOptionChild = ({ isShow, foodOption, dispatch }: Props) => {
 
     const handleAddIngredientsToFood = (ingredientChoose, optionChoose) => {
         dispatch(setAmountFoodOptionChild({ ingredientChoose, optionChoose }))
+    }
+
+    const handleRemoveIngredientsFoodOptionChild = (ingredientChoose, optionChoose) => {
+        dispatch(removeIngredientsFoodOptionChild({ ingredientChoose, optionChoose }))
     }
 
     return (
@@ -58,8 +64,9 @@ const ModalFoodOptionChild = ({ isShow, foodOption, dispatch }: Props) => {
 
                     {foodOption.options.map((option) => (
                         <Box key={option._id} w={'100%'}>
-                            <Box row w={'100%'} bg={colors.gray3}>
-                                <Txt ml={10}>{option.title}</Txt>
+                            <Box row w={'100%'} bg={colors.gray3} jc='space-between' px={10}>
+                                <Txt>{option.title}</Txt>
+                                <Txt>Số lượng: {option.maxChoose * foodOption.amount}</Txt>
                             </Box>
                             <Box row my={10}>
                                 {option.ingredients.map((ingredient) => (
@@ -71,9 +78,9 @@ const ModalFoodOptionChild = ({ isShow, foodOption, dispatch }: Props) => {
                                         w={s(70)}
                                     // styles={{backgroundColor: 'red'}}
                                     >
-                                        <Alarm
-                                            color={ingredient.food.amount > 0 ? colors.background : colors.gray2}
-                                            size={ms(25)}
+                                        <Img
+                                            source={getImageByFoodType(ingredient.food.type)}
+                                            styles={{ width: s(25), height: s(25) }}
                                         />
                                         <Txt color={ingredient.food.amount > 0 ? colors.background : colors.black}>{ingredient.food.amount}</Txt>
                                         <Txt
@@ -84,7 +91,12 @@ const ModalFoodOptionChild = ({ isShow, foodOption, dispatch }: Props) => {
                                             {ingredient.food.name}
                                         </Txt>
                                         {ingredient.food.amount > 0 &&
-                                            <TouchOpacity position='absolute' right={0} top={-5}>
+                                            <TouchOpacity
+                                                onPress={() => handleRemoveIngredientsFoodOptionChild(ingredient, option)}
+                                                position='absolute'
+                                                right={0}
+                                                top={-5}
+                                            >
                                                 <CloseCircle size={18} color={colors.red} />
                                             </TouchOpacity>
                                         }

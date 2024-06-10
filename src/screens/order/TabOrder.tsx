@@ -2,19 +2,22 @@ import React from 'react'
 import Box from '~/atoms/Box'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { orderedTabMainSelector } from '~/reduxs/selectors/mainSelector'
+import { useAppDispatch } from '~/hooks/redux'
 import { setOrderedTab } from '~/reduxs/slices/mainSlice'
 import { colors } from '~/themes/colors'
 
-const Ordered = () => {
+interface Props {
+    orderedTab: 'orderPending' | 'ordered'
+}
+
+const TabOrder = ({ orderedTab }: Props) => {
     const dispatch = useAppDispatch()
-    const orderedTab = useAppSelector(orderedTabMainSelector)
+
 
     return (
         <Box row borderColor={colors.background} borderWidth={1} m={5} p={5}>
             <TouchOpacity
-                onPress={() => dispatch(setOrderedTab(false))}
+                onPress={() => dispatch(setOrderedTab('orderPending'))}
                 f={1}
                 center
                 bg={!orderedTab ? colors.background : colors.white}
@@ -24,7 +27,7 @@ const Ordered = () => {
                 </Txt>
             </TouchOpacity>
             <TouchOpacity
-                onPress={() => dispatch(setOrderedTab(true))}
+                onPress={() => dispatch(setOrderedTab('ordered'))}
                 f={1}
                 center
                 bg={orderedTab ? colors.background : colors.white}
@@ -37,4 +40,4 @@ const Ordered = () => {
     )
 }
 
-export default Ordered
+export default TabOrder

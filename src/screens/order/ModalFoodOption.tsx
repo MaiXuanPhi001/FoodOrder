@@ -2,17 +2,19 @@ import { Dispatch, UnknownAction } from '@reduxjs/toolkit'
 import { Add, Alarm, BoxRemove, CloseCircle, CloseSquare, Minus, TickCircle, Trash } from 'iconsax-react-native'
 import React, { useState } from 'react'
 import { ScrollView } from 'react-native'
-import { ms, s } from 'react-native-size-matters'
+import { ms, s, vs } from 'react-native-size-matters'
 import Box from '~/atoms/Box'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
 import Modality from '~/components/Modality'
-import { setFoodOption, setAmountFoodOption, setFoodOptionChild } from '~/reduxs/slices/mainSlice'
+import { setFoodOption, setAmountFoodOption, setFoodOptionChild, removeIngredientsFoodOption, doneSelectFoodOption } from '~/reduxs/slices/mainSlice'
 import { getFoodOptionByFood } from '~/servers/databases/api/orderApi'
 import { colors } from '~/themes/colors'
 import ModalFoodOptionChild from './ModalFoodOptionChild'
 import { useAppSelector } from '~/hooks/redux'
 import { foodOptionChildMainSelector } from '~/reduxs/selectors/mainSelector'
+import Img from '~/atoms/Img'
+import { getImageByFoodType } from '~/utils/images'
 
 interface Props {
     isShow: boolean
@@ -34,13 +36,24 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
     }
 
     const handleAddIngredientsToFood = (ingredientChoose, optionChoose) => {
+        if (ingredientChoose.food.options) {
+            return dispatch(setFoodOptionChild({ foodOptionChild: ingredientChoose.food, optionChoose }))
+        }
+
         const foodOptionService = getFoodOptionByFood(ingredientChoose.food)
         if (foodOptionService) {
-            console.log('foodOptionService: ', JSON.stringify(foodOptionService))
-            dispatch(setFoodOptionChild({ foodOptionChild: foodOptionService, optionChoose }))
-        } else {
-            dispatch(setAmountFoodOption({ ingredientChoose, optionChoose }))
+            return dispatch(setFoodOptionChild({ foodOptionChild: foodOptionService, optionChoose }))
         }
+
+        dispatch(setAmountFoodOption({ ingredientChoose, optionChoose }))
+    }
+
+    const handleRemoveIngredientsToFood = (ingredientChoose, optionChoose) => {
+        dispatch(removeIngredientsFoodOption({ ingredientChoose, optionChoose }))
+    }
+
+    const handleDoneSelectFoodOption = () => {
+        dispatch(doneSelectFoodOption())
     }
 
     return (
@@ -52,7 +65,7 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
                             <CloseSquare color={colors.background} />
                         </TouchOpacity>
                         <Txt bold>{foodOption.name}</Txt>
-                        <TouchOpacity onPress={() => dispatch(setFoodOption(null))}>
+                        <TouchOpacity onPress={handleDoneSelectFoodOption}>
                             <TickCircle color={colors.background} />
                         </TouchOpacity>
                     </Box>
@@ -69,8 +82,9 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
 
                     {foodOption.options.map((option) => (
                         <Box key={option._id} w={'100%'}>
-                            <Box row w={'100%'} bg={colors.gray3}>
-                                <Txt ml={10}>{option.title}</Txt>
+                            <Box row w={'100%'} bg={colors.gray3} jc='space-between' px={10}>
+                                <Txt>{option.title}</Txt>
+                                <Txt>Số lượng: {option.maxChoose * foodOption.amount}</Txt>
                             </Box>
                             <Box row my={10}>
                                 {option.ingredients.map((ingredient) => (
@@ -82,9 +96,9 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
                                         w={s(70)}
                                     // styles={{backgroundColor: 'red'}}
                                     >
-                                        <Alarm
-                                            color={ingredient.food.amount > 0 ? colors.background : colors.gray2}
-                                            size={ms(25)}
+                                        <Img
+                                            source={getImageByFoodType(ingredient.food.type)}
+                                            styles={{ width: s(25), height: s(25) }}
                                         />
                                         <Txt color={ingredient.food.amount > 0 ? colors.background : colors.black}>{ingredient.food.amount}</Txt>
                                         <Txt
@@ -95,7 +109,12 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
                                             {ingredient.food.name}
                                         </Txt>
                                         {ingredient.food.amount > 0 &&
-                                            <TouchOpacity position='absolute' right={0} top={-5}>
+                                            <TouchOpacity
+                                                onPress={() => handleRemoveIngredientsToFood(ingredient, option)}
+                                                position='absolute'
+                                                right={0}
+                                                top={-5}
+                                            >
                                                 <CloseCircle size={18} color={colors.red} />
                                             </TouchOpacity>
                                         }

@@ -1,16 +1,16 @@
 import React from 'react'
 import { ScrollView } from 'react-native'
 import { useAppSelector } from '~/hooks/redux'
-import { foodsMainSelector } from '~/reduxs/selectors/mainSelector'
-import { Food } from '~/servers/databases/foods'
+import { foodsMainSelector, orderPendingMainSelector } from '~/reduxs/selectors/mainSelector'
 import ItemFoodsOrder from './ItemFoodsOrder'
 
 const FoodsOrder = () => {
     const foods = useAppSelector(foodsMainSelector)
+    const orderPending = useAppSelector(orderPendingMainSelector)
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-            {foods.map((food: Food) =>
+            {orderPending.map((food) =>
                 <ItemFoodsOrder key={food._id} food={food} />
             )}
         </ScrollView>
