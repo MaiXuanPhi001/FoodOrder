@@ -4,25 +4,38 @@ import Txt from '~/atoms/Txt'
 import { colors } from '~/themes/colors'
 
 const ItemFoodsOrder = ({ food }) => {
-    console.log('food: ', JSON.stringify(food))
+    if (food.amount < 1) {
+        return null
+    }
 
     return (
-        <Box p={5} row borderBottomWidth={1} borderColor={colors.gray}>
-            <Box p={3} mr={5} bg={colors.background} radius={5}>
-                <Txt size={10} color={colors.white}>{food.amount}</Txt>
+        <Box>
+            <Box row borderBottomWidth={1} w={'100%'}>
+                <Box p={3} radius={2} as='center' bg={colors.background}>
+                    <Txt size={10} bold color={colors.white}>{food.amount}</Txt>
+                </Box>
+                <Box as='center'>
+                    <Txt
+                        size={12}
+                        bold
+                    >
+                        {food.name}
+                    </Txt>
+                    {food.note && <Txt size={12} color={colors.gray2}>{food.note}</Txt>}
+                </Box>
             </Box>
-            <Box f={1}>
-                <Txt size={12} bold>{food.name}</Txt>
-                <Txt size={12} color={colors.gray2}>{food.name}</Txt>
-            </Box>
-            {food.options.map(option => {
-                const ingredients = option.ingredients
-                ingredients.map((ingredient) => {
-                    const food = ingredient.food
-                    return (
-                        <ItemFoodsOrder food={food} />
-                    )
-                })
+
+            {food?.options?.map((option, index) => {
+                return (
+                    <Box key={option._id}>
+                        {option?.ingredients?.map((ingredient) => (
+                            <ItemFoodsOrder
+                                key={ingredient.food._id}
+                                food={ingredient.food}
+                            />
+                        ))}
+                    </Box>
+                )
             })}
         </Box>
     )

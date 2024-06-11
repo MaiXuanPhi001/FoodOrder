@@ -29,7 +29,7 @@ const Foods = ({ useResponsive }: Props) => {
 
   return (
     <Box w={useResponsive.widthFoods} h={useResponsive.heighFoods} bg={colors.gray}>
-      <ScrollView
+      {/* <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}>
         <Box
@@ -54,7 +54,7 @@ const Foods = ({ useResponsive }: Props) => {
           foodOption={foodOption }
           isShow={foodOption !== null}
         />
-      }
+      } */}
     </Box>
   )
 }

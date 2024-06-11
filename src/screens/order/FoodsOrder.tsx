@@ -9,9 +9,12 @@ const FoodsOrder = () => {
     const orderPending = useAppSelector(orderPendingMainSelector)
 
     return (
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-            {orderPending.map((food) =>
-                <ItemFoodsOrder key={food._id} food={food} />
+        <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 5, paddingLeft: 0 }}>
+            {orderPending.map((food, index) =>
+                <ItemFoodsOrder
+                    key={food._id}
+                    food={food}
+                />
             )}
         </ScrollView>
     )
