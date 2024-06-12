@@ -34,10 +34,6 @@ const ItemFood = ({ food, useResponsive, onChooseFood }: Props) => {
                 source={getImageByFoodType(food.type)}
                 styles={{ width: useResponsive.sizeIconItem, height: useResponsive.sizeIconItem }}
             />
-            {/* <Alarm
-                color={colors.gray2}
-                size={useResponsive.sizeIconItem}
-            /> */}
             <Box mt={10} w={'100%'}>
                 <Txt textAlign='center' bold size={s(10)}>{food.name}</Txt>
                 <Txt textAlign='center' color={colors.gray2} size={s(10)}>{food.price}</Txt>

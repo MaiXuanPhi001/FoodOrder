@@ -7,7 +7,7 @@ import Box from '~/atoms/Box'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
 import Modality from '~/components/Modality'
-import { setFoodOption, setAmountFoodOption, setFoodOptionChild, removeIngredientsFoodOption, doneSelectFoodOption } from '~/reduxs/slices/mainSlice'
+import { setFoodOption, setAmountFoodOption, setFoodOptionChild, removeIngredientsFoodOption, doneSelectFoodOption, changeNoteFoodOption } from '~/reduxs/slices/mainSlice'
 import { getFoodOptionByFood } from '~/servers/databases/api/orderApi'
 import { colors } from '~/themes/colors'
 import ModalFoodOptionChild from './ModalFoodOptionChild'
@@ -15,6 +15,7 @@ import { useAppSelector } from '~/hooks/redux'
 import { foodOptionChildMainSelector } from '~/reduxs/selectors/mainSelector'
 import Img from '~/atoms/Img'
 import { getImageByFoodType } from '~/utils/images'
+import Input from '~/atoms/Input'
 
 interface Props {
     isShow: boolean
@@ -78,6 +79,19 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
                         <TouchOpacity onPress={handlePlusFood}>
                             <Add color={colors.background} size={30} />
                         </TouchOpacity>
+                    </Box>
+
+                    <Box styles={{ borderTopWidth: 1, borderColor: colors.gray3, width: '100%', paddingVertical: 10, paddingHorizontal: 5 }}>
+                        <Txt>Giá bán: {foodOption.price}</Txt>
+                    </Box>
+
+                    <Box styles={{ borderTopWidth: 1, borderBottomWidth: 1, width: '100%', borderColor: colors.gray3 }}>
+                        <Input
+                            value={foodOption.note}
+                            onChangeText={(text: String) => dispatch(changeNoteFoodOption(text))}
+                            placeholder='Ghi chú'
+                            h={35}
+                        />
                     </Box>
 
                     {foodOption.options.map((option) => (

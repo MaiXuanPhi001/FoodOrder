@@ -9,7 +9,7 @@ import { colors } from '~/themes/colors'
 import ItemFood from './ItemFood'
 import ModalFoodOption from './ModalFoodOption'
 import { getFoodDetailApi } from '~/servers/databases/api/orderApi'
-import { setFoodOption } from '~/reduxs/slices/mainSlice'
+import { addFoodToOrderPending, doneSelectFoodOption, setFoodOption } from '~/reduxs/slices/mainSlice'
 
 interface Props {
   useResponsive: ResponsiveOrder
@@ -24,12 +24,16 @@ const Foods = ({ useResponsive }: Props) => {
   // Event khi user nhấn vào ItemFood
   const handleChooseFood = (food: Food) => {
     const foodOptionService = getFoodDetailApi(food)
-    dispatch(setFoodOption(foodOptionService))
+    if (foodOptionService?.options?.length > 0) {
+      dispatch(setFoodOption(foodOptionService))
+    } else {
+      dispatch(addFoodToOrderPending(foodOptionService))
+    }
   }
 
   return (
     <Box w={useResponsive.widthFoods} h={useResponsive.heighFoods} bg={colors.gray}>
-      {/* <ScrollView
+      <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}>
         <Box
@@ -51,10 +55,10 @@ const Foods = ({ useResponsive }: Props) => {
       {foodOption &&
         <ModalFoodOption
           dispatch={dispatch}
-          foodOption={foodOption }
+          foodOption={foodOption}
           isShow={foodOption !== null}
         />
-      } */}
+      }
     </Box>
   )
 }
