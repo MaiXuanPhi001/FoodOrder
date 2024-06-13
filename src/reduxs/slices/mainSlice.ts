@@ -444,7 +444,7 @@ const mainSlice = createSlice({
                 }
             }
         },
-        doneSelectFoodOptionChild: (state, action) => {
+        doneSelectFoodOptionChild: (state) => {
             // Hàm check xem chọn đủ thành phần của một món ăn chưa, vd: mì cay phải chọn cấp độ mới cho hoàn thành
             let error = false
             if (state.foodOptionChild.amount < 1) {
@@ -460,12 +460,11 @@ const mainSlice = createSlice({
                 })
 
                 if (sumAmountIngredients !== (maxChoose * state.foodOptionChild.amount)) {
-                    Alert.alert('Vui lòng chọn đủ thành phần của món')
                     error = true
                 }
             })
 
-            if (error) return
+            if (error) return Alert.alert('Vui lòng chọn đủ thành phần của món')
 
             const amountFoodOptionChild = state.foodOptionChild.amount
             let sumAmountIngredients = 0
@@ -536,12 +535,11 @@ const mainSlice = createSlice({
                 })
 
                 if (sumAmountIngredients !== (maxChoose * state.foodOption.amount)) {
-                    Alert.alert('Vui lòng chọn đủ thành phần của món')
                     error = true
                 }
             })
 
-            if (error) return
+            if (error) return Alert.alert('Vui lòng chọn đủ thành phần của món')
 
             state.orderPending.push(state.foodOption)
             state.foodOption = null
@@ -551,8 +549,11 @@ const mainSlice = createSlice({
             state.orderPending.push(action.payload)
         },
         changeNoteFoodOption: (state, action) => {
-            state.foodOption = { ...state.foodOption, note: action.payload}
-        }
+            state.foodOption = { ...state.foodOption, note: action.payload }
+        },
+        changeNoteFoodOptionChild: (state, action) => {
+            state.foodOptionChild = { ...state.foodOptionChild, note: action.payload }
+        },
     },
     extraReducers: builder => { }
 })
@@ -572,6 +573,7 @@ export const {
     doneSelectFoodOption,
     addFoodToOrderPending,
     changeNoteFoodOption,
+    changeNoteFoodOptionChild,
 } = mainSlice.actions
 
 export default mainSlice.reducer

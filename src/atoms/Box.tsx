@@ -36,6 +36,7 @@ interface Props {
     center?: boolean
     jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around" | "space-evenly"
     radius?: number
+    borderTopWidth?: number
     borderTopLeftRadius?: number
     borderTopRightRadius?: number
     borderBottomRightRadius?: number
@@ -84,6 +85,7 @@ const Box: React.FC<Props & ViewProps> = ({
     jc,
     center,
     radius,
+    borderTopWidth,
     borderTopLeftRadius,
     borderTopRightRadius,
     borderBottomRightRadius,
@@ -130,6 +132,7 @@ const Box: React.FC<Props & ViewProps> = ({
             alignSelf: as,
             justifyContent: jc,
             borderRadius: radius,
+            borderTopWidth,
             borderTopLeftRadius,
             borderTopRightRadius,
             borderBottomRightRadius,
