@@ -1,6 +1,6 @@
 import { Dispatch, UnknownAction } from '@reduxjs/toolkit'
 import React from 'react'
-import { changeNoteFoodOptionChild, doneSelectFoodOptionChild, plusOrMinusFoodOptionChild, removeIngredientsFoodOptionChild, setAmountFoodOptionChild, setFoodOptionChild } from '~/reduxs/slices/mainSlice'
+import { addIngredientToFoodOption, changeNoteFoodOptionChild, doneSelectFoodOptionChild, plusOrMinusFoodOptionChild, removeIngredientOfFoodOption, setFoodOptionChild } from '~/reduxs/slices/mainSlice'
 import ModalContainer from './ModalContainer'
 
 interface Props {
@@ -28,11 +28,11 @@ const ModalFoodOptionChild = ({ isShow, foodOption, dispatch }: Props) => {
     }
 
     const handleRemoveIngredientsFoodOptionChild = (ingredientChoose, optionChoose) => {
-        dispatch(removeIngredientsFoodOptionChild({ ingredientChoose, optionChoose }))
+        dispatch(removeIngredientOfFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOptionChild' }))
     }
 
     const handleAddIngredientsToFood = (ingredientChoose, optionChoose) => {
-        dispatch(setAmountFoodOptionChild({ ingredientChoose, optionChoose }))
+        dispatch(addIngredientToFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOptionChild' }))
     }
 
     return (

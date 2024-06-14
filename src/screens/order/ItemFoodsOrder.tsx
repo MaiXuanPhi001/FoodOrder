@@ -22,7 +22,7 @@ const ItemFoodsOrder = ({ food, main, onShowFoodOption }) => {
                 borderColor: colors.gray2,
             }}
         >
-            <Box row py={3} styles={{ borderBottomWidth: main ? 0 : 1, borderColor: colors.gray3 }}>
+            <Box row py={3} styles={{ borderBottomWidth: 1, borderColor: colors.gray3 }}>
                 <Box bg={colors.background} p={3} row mr={5} as='center'>
                     <Txt size={8} bold color={colors.white}>{'0' + food.amount}</Txt>
                 </Box>

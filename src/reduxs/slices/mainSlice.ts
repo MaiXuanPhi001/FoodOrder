@@ -14,6 +14,7 @@ interface MainSlice {
     foodOptionChild: any
     optionChoose: any
     orderPending: any
+    foodOptionUpdate: any
 }
 
 interface PayloadSetAreas {
@@ -355,6 +356,7 @@ const initialState: MainSlice = {
         //     ]
         //   }
     ],
+    foodOptionUpdate: null
 }
 
 const mainSlice = createSlice({
@@ -381,30 +383,10 @@ const mainSlice = createSlice({
         setFoodOption: (state, action) => {
             state.foodOption = action.payload
         },
-        setAmountFoodOption: (state, action) => {
-            const { ingredientChoose, optionChoose } = action.payload
-            const amountFoodOption = state.foodOption.amount
-            state.foodOption.options.forEach(option => {
-                if (option._id === optionChoose._id) {
-                    let sum = 0
-                    option.ingredients.forEach(ingredient => {
-                        sum += ingredient.food.amount
-                    })
-
-                    if ((sum + 1) <= (option.maxChoose * amountFoodOption)) {
-                        option.ingredients.forEach(ingredient => {
-                            if (ingredient._id === ingredientChoose._id) {
-                                ingredient.food.amount++
-                            }
-                        })
-                    }
-                }
-            })
-        },
-        setAmountFoodOptionChild: (state, action) => {
-            const { ingredientChoose, optionChoose } = action.payload
-            const amountFoodOption = state.foodOptionChild.amount
-            state.foodOptionChild.options.forEach(option => {
+        addIngredientToFoodOption: (state, action) => {
+            const { ingredientChoose, optionChoose, fieldName } = action.payload
+            const amountFoodOption = state[fieldName].amount
+            state[fieldName].options.forEach(option => {
                 if (option._id === optionChoose._id) {
                     let sum = 0
                     option.ingredients.forEach(ingredient => {
@@ -444,27 +426,16 @@ const mainSlice = createSlice({
                 }
             }
         },
+        doneSelectFoodOption: (state) => {
+            const error = handleCheckDoneSelectFoodOption(state, 'foodOption')
+            if (error) return
+
+            state.orderPending.push(state.foodOption)
+            state.foodOption = null
+        },
         doneSelectFoodOptionChild: (state) => {
-            // Hàm check xem chọn đủ thành phần của một món ăn chưa, vd: mì cay phải chọn cấp độ mới cho hoàn thành
-            let error = false
-            if (state.foodOptionChild.amount < 1) {
-                Alert.alert('Số lượng món phải lớn hơn 0')
-                return
-            }
-
-            state.foodOptionChild.options.forEach((option) => {
-                const maxChoose = option.maxChoose
-                let sumAmountIngredients = 0
-                option.ingredients.forEach((ingredient) => {
-                    sumAmountIngredients += ingredient.food.amount
-                })
-
-                if (sumAmountIngredients !== (maxChoose * state.foodOptionChild.amount)) {
-                    error = true
-                }
-            })
-
-            if (error) return Alert.alert('Vui lòng chọn đủ thành phần của món')
+            const error = handleCheckDoneSelectFoodOption(state, 'foodOptionChild')
+            if (error) return
 
             const amountFoodOptionChild = state.foodOptionChild.amount
             let sumAmountIngredients = 0
@@ -490,11 +461,11 @@ const mainSlice = createSlice({
                 }
             })
         },
-        removeIngredientsFoodOption: (state, action) => {
-            const { ingredientChoose, optionChoose } = action.payload
-            state.foodOption.options.forEach((option) => {
+        removeIngredientOfFoodOption: (state, action) => {
+            const { ingredientChoose, optionChoose, fieldName} = action.payload
+            state[fieldName].options.forEach((option) => {
                 if (option._id === optionChoose._id) {
-                    option.ingredients.forEach((ingredient, index) => {
+                    option.ingredients.forEach((ingredient) => {
                         if (ingredient._id === ingredientChoose._id) {
                             if (ingredientChoose.food.options) {
                                 delete ingredient.food.options
@@ -504,46 +475,6 @@ const mainSlice = createSlice({
                     })
                 }
             })
-        },
-        removeIngredientsFoodOptionChild: (state, action) => {
-            const { ingredientChoose, optionChoose } = action.payload
-            state.foodOptionChild.options.forEach((option) => {
-                if (option._id === optionChoose._id) {
-                    option.ingredients.forEach((ingredient, index) => {
-                        if (ingredient._id === ingredientChoose._id) {
-                            if (ingredientChoose.food.options) {
-                                delete ingredient.food.options
-                            }
-                            ingredient.food.amount = 0
-                        }
-                    })
-                }
-            })
-        },
-        doneSelectFoodOption: (state) => {
-            let error = false
-            if (state.foodOption.amount < 1) {
-                Alert.alert('Số lượng món phải lớn hơn 0')
-                return
-            }
-
-            state.foodOption.options.forEach((option) => {
-                const maxChoose = option.maxChoose
-                let sumAmountIngredients = 0
-                option.ingredients.forEach((ingredient) => {
-                    sumAmountIngredients += ingredient.food.amount
-                })
-
-                if (sumAmountIngredients !== (maxChoose * state.foodOption.amount)) {
-                    error = true
-                }
-            })
-
-            if (error) return Alert.alert('Vui lòng chọn đủ thành phần của món')
-
-            state.orderPending.push(state.foodOption)
-            state.foodOption = null
-            console.log('orderPendin3433: ', JSON.stringify(state.orderPending))
         },
         addFoodToOrderPending: (state, action) => {
             state.orderPending.push(action.payload)
@@ -554,26 +485,55 @@ const mainSlice = createSlice({
         changeNoteFoodOptionChild: (state, action) => {
             state.foodOptionChild = { ...state.foodOptionChild, note: action.payload }
         },
+        setFoodOptionUpdate: (state, action) => {
+            state.foodOptionUpdate = action.payload
+        }
     },
     extraReducers: builder => { }
 })
+
+// Hàm check xem chọn đủ thành phần của một món ăn chưa, vd: mì cay phải chọn cấp độ mới cho hoàn thành
+const handleCheckDoneSelectFoodOption = (state: MainSlice, fieldName: keyof MainSlice) => {
+    let error = false
+    if (state[fieldName].amount < 1) {
+        Alert.alert('Số lượng món phải lớn hơn 0')
+        return
+    }
+
+    state[fieldName].options.forEach((option) => {
+        const maxChoose = option.maxChoose
+        let sumAmountIngredients = 0
+        option.ingredients.forEach((ingredient) => {
+            sumAmountIngredients += ingredient.food.amount
+        })
+
+        if (sumAmountIngredients !== (maxChoose * state[fieldName].amount)) {
+            error = true
+        }
+    })
+
+    if (error) {
+        Alert.alert('Vui lòng chọn đủ thành phần của món')
+    }
+
+    return error
+}
 
 export const {
     setFirstData,
     setAreaChoose,
     setOrderedTab,
     setFoodOption,
-    setAmountFoodOption,
+    addIngredientToFoodOption,
     setFoodOptionChild,
-    setAmountFoodOptionChild,
     plusOrMinusFoodOptionChild,
     doneSelectFoodOptionChild,
-    removeIngredientsFoodOption,
-    removeIngredientsFoodOptionChild,
+    removeIngredientOfFoodOption,
     doneSelectFoodOption,
     addFoodToOrderPending,
     changeNoteFoodOption,
     changeNoteFoodOptionChild,
+    setFoodOptionUpdate,
 } = mainSlice.actions
 
 export default mainSlice.reducer

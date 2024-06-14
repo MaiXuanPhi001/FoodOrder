@@ -1,39 +1,42 @@
 import { Dispatch, UnknownAction } from '@reduxjs/toolkit'
 import React from 'react'
 import { useAppSelector } from '~/hooks/redux'
-import { foodOptionChildMainSelector } from '~/reduxs/selectors/mainSelector'
-import { doneSelectFoodOption, removeIngredientOfFoodOption, addIngredientToFoodOption, setFoodOption, setFoodOptionChild } from '~/reduxs/slices/mainSlice'
+import { foodOptionMainSelector } from '~/reduxs/selectors/mainSelector'
+import { changeNoteFoodOption, removeIngredientsFoodOption, addIngredientToFoodOption, setFoodOption, setFoodOptionChild, setFoodOptionUpdate } from '~/reduxs/slices/mainSlice'
 import { getFoodOptionByFood } from '~/servers/databases/api/orderApi'
 import ModalContainer from './ModalContainer'
-import ModalFoodOptionChild from './ModalFoodOptionChild'
 
 interface Props {
     isShow: boolean
-    foodOption: any
     dispatch: Dispatch<UnknownAction>
+    foodOptionUpdate: any
 }
 
-const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
-    const foodOptionChild = useAppSelector(foodOptionChildMainSelector)
-
+const ModalFoodOptionUpdate = ({ isShow, dispatch, foodOptionUpdate }: Props) => {
     const handleCloseModal = () => {
-        dispatch(setFoodOption(null))
+        dispatch(setFoodOptionUpdate(null))
     }
 
-    const handleDoneSelectFoodOption = () => {
-        dispatch(doneSelectFoodOption())
+    const handleUpdateFoodOption = () => {
+        // dispatch(updateFoodOrder())
     }
 
     const handleChangeAmountFoodOption = (type: 'plus' | 'minus') => {
         if (type === 'plus') {
-            dispatch(setFoodOption({ ...foodOption, amount: foodOption.amount + 1 }))
-        } else if (type === 'minus' && foodOption.amount > 1) {
-            dispatch(setFoodOption({ ...foodOption, amount: foodOption.amount - 1 }))
+            dispatch(setFoodOptionUpdate({
+                ...foodOptionUpdate,
+                amount: foodOptionUpdate.amount + 1
+            }))
+        } else if (type === 'minus' && foodOptionUpdate.amount > 1) {
+            dispatch(setFoodOptionUpdate({
+                ...foodOptionUpdate,
+                amount: foodOptionUpdate.amount - 1
+            }))
         }
     }
 
     const handleChangeNoteFoodOption = (text: string) => {
-        dispatch(setFoodOption({ ...foodOption, note: text }))
+        dispatch(setFoodOptionUpdate({ ...foodOptionUpdate, note: text }))
     }
 
     const handleAddIngredientsToFood = (ingredientChoose, optionChoose) => {
@@ -46,34 +49,34 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
             return dispatch(setFoodOptionChild({ foodOptionChild: foodOptionService, optionChoose }))
         }
 
-        dispatch(addIngredientToFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOption' }))
+        dispatch(addIngredientToFoodOption({ ingredientChoose, optionChoose }))
     }
 
     const handleRemoveIngredientsFoodOption = (ingredientChoose, optionChoose) => {
-        dispatch(removeIngredientOfFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOption' }))
+        dispatch(removeIngredientsFoodOption({ ingredientChoose, optionChoose }))
     }
 
     return (
         <ModalContainer
             isShow={isShow}
-            foodOption={foodOption}
+            foodOption={foodOptionUpdate}
             dispatch={dispatch}
             onCloseModal={handleCloseModal}
             onAddIngredientsToFood={handleAddIngredientsToFood}
-            onDoneSelectFoodOption={handleDoneSelectFoodOption}
+            onDoneSelectFoodOption={handleUpdateFoodOption}
             onChangeAmountFoodOption={handleChangeAmountFoodOption}
             onChangeNoteFoodOption={handleChangeNoteFoodOption}
             onRemoveIngredientsFoodOption={handleRemoveIngredientsFoodOption}
         >
-            {foodOptionChild &&
+            {/* {foodOption &&
                 <ModalFoodOptionChild
                     dispatch={dispatch}
-                    foodOption={foodOptionChild}
+                    foodOption={foodOption}
                     isShow={foodOption !== null}
                 />
-            }
+            } */}
         </ModalContainer>
     )
 }
 
-export default ModalFoodOption
+export default ModalFoodOptionUpdate
