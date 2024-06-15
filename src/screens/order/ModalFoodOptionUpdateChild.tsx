@@ -9,30 +9,30 @@ interface Props {
     dispatch: Dispatch<UnknownAction>
 }
 
-const ModalFoodOptionChild = ({ isShow, foodOption, dispatch }: Props) => {
+const ModalFoodOptionUpdateChild = ({ isShow, foodOption, dispatch }: Props) => {
 
     const handleCloseModalChild = () => {
-        dispatch(setFoodOptionChild({ foodOptionChild: null, optionChoose: null, fieldName: 'foodOptionChild' }))
+        dispatch(setFoodOptionChild({ foodOptionChild: null, optionChoose: null, fieldName: 'foodOptionUpdateChild' }))
     }
 
     const handleDoneSelectFoodOptionChild = () => {
-        dispatch(doneSelectFoodOptionChild('foodOptionChild'))
+        dispatch(doneSelectFoodOptionChild('foodOptionUpdateChild'))
     }
 
     const handleChangeAmountFoodOptionChild = (type: 'plus' | 'minus') => {
-        dispatch(plusOrMinusFoodOptionChild({ type, fieldName: 'foodOptionChild' }))
+        dispatch(plusOrMinusFoodOptionChild({ type, fieldName: 'foodOptionUpdateChild' }))
     }
 
     const handleChangeNoteFoodOptionChild = (text: string) => {
-        dispatch(changeNoteFoodOptionChild({ newNote: text, fieldName: 'foodOptionChild' }))
+        dispatch(changeNoteFoodOptionChild({ newNote: text, fieldName: 'foodOptionUpdateChild' }))
     }
 
     const handleRemoveIngredientsFoodOptionChild = (ingredientChoose, optionChoose) => {
-        dispatch(removeIngredientOfFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOptionChild' }))
+        dispatch(removeIngredientOfFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOptionUpdateChild' }))
     }
 
     const handleAddIngredientsToFood = (ingredientChoose, optionChoose) => {
-        dispatch(addIngredientToFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOptionChild' }))
+        dispatch(addIngredientToFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOptionUpdateChild' }))
     }
 
     return (
@@ -50,4 +50,4 @@ const ModalFoodOptionChild = ({ isShow, foodOption, dispatch }: Props) => {
     )
 }
 
-export default ModalFoodOptionChild
+export default ModalFoodOptionUpdateChild

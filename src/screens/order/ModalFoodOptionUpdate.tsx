@@ -1,10 +1,11 @@
 import { Dispatch, UnknownAction } from '@reduxjs/toolkit'
 import React from 'react'
 import { useAppSelector } from '~/hooks/redux'
-import { foodOptionMainSelector } from '~/reduxs/selectors/mainSelector'
-import { changeNoteFoodOption, removeIngredientsFoodOption, addIngredientToFoodOption, setFoodOption, setFoodOptionChild, setFoodOptionUpdate } from '~/reduxs/slices/mainSlice'
+import { foodOptionUpdateChildMainSelector } from '~/reduxs/selectors/mainSelector'
+import { addIngredientToFoodOption, removeIngredientOfFoodOption, setFoodOptionChild, setFoodOptionUpdate, updateFoodOrderPending } from '~/reduxs/slices/mainSlice'
 import { getFoodOptionByFood } from '~/servers/databases/api/orderApi'
 import ModalContainer from './ModalContainer'
+import ModalFoodOptionUpdateChild from './ModalFoodOptionUpdateChild'
 
 interface Props {
     isShow: boolean
@@ -13,12 +14,14 @@ interface Props {
 }
 
 const ModalFoodOptionUpdate = ({ isShow, dispatch, foodOptionUpdate }: Props) => {
+    const foodOptionUpdateChild = useAppSelector(foodOptionUpdateChildMainSelector)
+
     const handleCloseModal = () => {
         dispatch(setFoodOptionUpdate(null))
     }
 
     const handleUpdateFoodOption = () => {
-        // dispatch(updateFoodOrder())
+        dispatch(updateFoodOrderPending())
     }
 
     const handleChangeAmountFoodOption = (type: 'plus' | 'minus') => {
@@ -41,19 +44,19 @@ const ModalFoodOptionUpdate = ({ isShow, dispatch, foodOptionUpdate }: Props) =>
 
     const handleAddIngredientsToFood = (ingredientChoose, optionChoose) => {
         if (ingredientChoose.food.options) {
-            return dispatch(setFoodOptionChild({ foodOptionChild: ingredientChoose.food, optionChoose }))
+            return dispatch(setFoodOptionChild({ foodOptionChild: ingredientChoose.food, optionChoose, fieldName: 'foodOptionUpdateChild' }))
         }
 
         const foodOptionService = getFoodOptionByFood(ingredientChoose.food)
         if (foodOptionService) {
-            return dispatch(setFoodOptionChild({ foodOptionChild: foodOptionService, optionChoose }))
+            return dispatch(setFoodOptionChild({ foodOptionChild: foodOptionService, optionChoose, fieldName: 'foodOptionUpdateChild' }))
         }
 
-        dispatch(addIngredientToFoodOption({ ingredientChoose, optionChoose }))
+        dispatch(addIngredientToFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOptionUpdate' }))
     }
 
     const handleRemoveIngredientsFoodOption = (ingredientChoose, optionChoose) => {
-        dispatch(removeIngredientsFoodOption({ ingredientChoose, optionChoose }))
+        dispatch(removeIngredientOfFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOptionUpdate' }))
     }
 
     return (
@@ -68,13 +71,13 @@ const ModalFoodOptionUpdate = ({ isShow, dispatch, foodOptionUpdate }: Props) =>
             onChangeNoteFoodOption={handleChangeNoteFoodOption}
             onRemoveIngredientsFoodOption={handleRemoveIngredientsFoodOption}
         >
-            {/* {foodOption &&
-                <ModalFoodOptionChild
+            {foodOptionUpdateChild &&
+                <ModalFoodOptionUpdateChild
                     dispatch={dispatch}
-                    foodOption={foodOption}
-                    isShow={foodOption !== null}
+                    foodOption={foodOptionUpdateChild}
+                    isShow={foodOptionUpdateChild !== null}
                 />
-            } */}
+            }
         </ModalContainer>
     )
 }

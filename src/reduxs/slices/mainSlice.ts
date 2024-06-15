@@ -15,6 +15,7 @@ interface MainSlice {
     optionChoose: any
     orderPending: any
     foodOptionUpdate: any
+    foodOptionUpdateChild: any
 }
 
 interface PayloadSetAreas {
@@ -356,7 +357,8 @@ const initialState: MainSlice = {
         //     ]
         //   }
     ],
-    foodOptionUpdate: null
+    foodOptionUpdate: null,
+    foodOptionUpdateChild: null
 }
 
 const mainSlice = createSlice({
@@ -383,6 +385,11 @@ const mainSlice = createSlice({
         setFoodOption: (state, action) => {
             state.foodOption = action.payload
         },
+        setFoodOptionChild: (state, action) => {
+            const { foodOptionChild, optionChoose, fieldName } = action.payload
+            state[fieldName] = foodOptionChild
+            state.optionChoose = optionChoose
+        },
         addIngredientToFoodOption: (state, action) => {
             const { ingredientChoose, optionChoose, fieldName } = action.payload
             const amountFoodOption = state[fieldName].amount
@@ -403,26 +410,23 @@ const mainSlice = createSlice({
                 }
             })
         },
-        setFoodOptionChild: (state, action) => {
-            state.foodOptionChild = action.payload.foodOptionChild
-            state.optionChoose = action.payload.optionChoose
-        },
         plusOrMinusFoodOptionChild: (state, action) => {
-            const type = action.payload
-            const amountFoodOption = state.foodOption.amount
+            const { type, fieldName } = action.payload
+            const fieldFoodOption = fieldName === 'foodOptionChild' ? 'foodOption' : 'foodOptionUpdate'
+            const amountFoodOption = state[fieldFoodOption].amount
             if (type === 'plus') {
-                const amountCurrent = state.foodOptionChild.amount + 1
-                state.foodOption.options.forEach((option) => {
+                const amountCurrent = state[fieldName].amount + 1
+                state[fieldFoodOption].options.forEach((option) => {
                     if (option._id === state.optionChoose._id) {
                         if (amountCurrent <= (option.maxChoose * amountFoodOption)) {
-                            state.foodOptionChild.amount = amountCurrent
+                            state[fieldName].amount = amountCurrent
                         }
                     }
                 })
             } else {
-                const amountCurrent = state.foodOptionChild.amount - 1
+                const amountCurrent = state[fieldName].amount - 1
                 if (amountCurrent >= 1) {
-                    state.foodOptionChild.amount = amountCurrent
+                    state[fieldName].amount = amountCurrent
                 }
             }
         },
@@ -433,36 +437,40 @@ const mainSlice = createSlice({
             state.orderPending.push(state.foodOption)
             state.foodOption = null
         },
-        doneSelectFoodOptionChild: (state) => {
-            const error = handleCheckDoneSelectFoodOption(state, 'foodOptionChild')
+        doneSelectFoodOptionChild: (state, action) => {
+            const fieldChild = action.payload
+            const error = handleCheckDoneSelectFoodOption(state, fieldChild)
             if (error) return
 
-            const amountFoodOptionChild = state.foodOptionChild.amount
+            const amountFoodOptionChild = state[fieldChild].amount
             let sumAmountIngredients = 0
             let position = -1
-            state.foodOption.options.forEach((option) => {
+
+            const fieldParent = fieldChild === 'foodOptionChild' ? 'foodOption' : 'foodOptionUpdate'
+
+            state[fieldParent].options.forEach((option) => {
                 if (option._id === state.optionChoose._id) {
                     option.ingredients.forEach((ingredient, index) => {
-                        if (ingredient.food._id !== state.foodOptionChild._id) {
+                        if (ingredient.food._id !== state[fieldChild]._id) {
                             sumAmountIngredients += ingredient.food.amount
                         }
 
-                        if (ingredient.food._id === state.foodOptionChild._id) {
+                        if (ingredient.food._id === state[fieldChild]._id) {
                             position = index
                         }
                     })
 
-                    if ((sumAmountIngredients + amountFoodOptionChild) > (state.optionChoose.maxChoose * state.foodOption.amount)) {
+                    if ((sumAmountIngredients + amountFoodOptionChild) > (state.optionChoose.maxChoose * state[fieldParent].amount)) {
                         Alert.alert('Vượt quá số lượng món trong một mục')
                     } else {
-                        option.ingredients[position].food = state.foodOptionChild
+                        option.ingredients[position].food = state[fieldChild]
                     }
-                    state.foodOptionChild = null
+                    state[fieldChild] = null
                 }
             })
         },
         removeIngredientOfFoodOption: (state, action) => {
-            const { ingredientChoose, optionChoose, fieldName} = action.payload
+            const { ingredientChoose, optionChoose, fieldName } = action.payload
             state[fieldName].options.forEach((option) => {
                 if (option._id === optionChoose._id) {
                     option.ingredients.forEach((ingredient) => {
@@ -483,11 +491,21 @@ const mainSlice = createSlice({
             state.foodOption = { ...state.foodOption, note: action.payload }
         },
         changeNoteFoodOptionChild: (state, action) => {
-            state.foodOptionChild = { ...state.foodOptionChild, note: action.payload }
+            const { newNote, fieldName } = action.payload
+            state.foodOptionChild = { ...state[fieldName], note: newNote }
         },
         setFoodOptionUpdate: (state, action) => {
             state.foodOptionUpdate = action.payload
-        }
+        },
+        updateFoodOrderPending: (state) => {
+            state.orderPending = state.orderPending.map((item) => {
+                if (item._id === state.foodOptionUpdate._id) {
+                    return state.foodOptionUpdate
+                }
+                return item
+            })
+            state.foodOptionUpdate = null
+        },
     },
     extraReducers: builder => { }
 })
@@ -534,6 +552,7 @@ export const {
     changeNoteFoodOption,
     changeNoteFoodOptionChild,
     setFoodOptionUpdate,
+    updateFoodOrderPending,
 } = mainSlice.actions
 
 export default mainSlice.reducer

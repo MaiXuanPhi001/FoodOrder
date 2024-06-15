@@ -38,12 +38,12 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
 
     const handleAddIngredientsToFood = (ingredientChoose, optionChoose) => {
         if (ingredientChoose.food.options) {
-            return dispatch(setFoodOptionChild({ foodOptionChild: ingredientChoose.food, optionChoose }))
+            return dispatch(setFoodOptionChild({ foodOptionChild: ingredientChoose.food, optionChoose, fieldName: 'foodOptionChild' }))
         }
 
         const foodOptionService = getFoodOptionByFood(ingredientChoose.food)
         if (foodOptionService) {
-            return dispatch(setFoodOptionChild({ foodOptionChild: foodOptionService, optionChoose }))
+            return dispatch(setFoodOptionChild({ foodOptionChild: foodOptionService, optionChoose, fieldName: 'foodOptionChild' }))
         }
 
         dispatch(addIngredientToFoodOption({ ingredientChoose, optionChoose, fieldName: 'foodOption' }))
