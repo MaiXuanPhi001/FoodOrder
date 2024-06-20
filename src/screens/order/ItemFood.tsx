@@ -1,12 +1,11 @@
-import { Alarm } from 'iconsax-react-native'
 import React from 'react'
 import { s } from 'react-native-size-matters'
 import Box from '~/atoms/Box'
 import Img from '~/atoms/Img'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
+import { Food } from '~/models/database'
 import { ResponsiveOrder } from '~/models/responsive'
-import { Food } from '~/servers/databases/foods'
 import { colors } from '~/themes/colors'
 import { getImageByFoodType } from '~/utils/images'
 

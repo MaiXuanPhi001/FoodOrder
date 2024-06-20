@@ -1,12 +1,14 @@
-import { Food, foods } from "../foods";
+import { Ingredient } from "~/models/food";
+import { foods } from "../foods";
 import { ingredients as ingredientsDB } from "../ingredients";
 import { optionFoods as optionFoodsDB } from "../optionFoods";
+import { Food, OptionFood } from "~/models/database";
 
 export const getFoodDetailApi = (food: Food) => {
-    let optionFoods = optionFoodsDB.filter((option) => option._idFood === food._id)
+    let optionFoods: OptionFood[] = optionFoodsDB.filter((option) => option._idFood === food._id)
 
     optionFoods.forEach((option, i) => {
-        let ingredients = []
+        let ingredients: Ingredient[] = []
         ingredientsDB.forEach(ingredient => {
             if (ingredient._idOptionFood === option._id) {
                 const food = foods.filter((food) => ingredient._idFood === food._id)[0]

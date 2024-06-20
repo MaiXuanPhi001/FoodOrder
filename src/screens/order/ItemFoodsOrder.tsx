@@ -2,9 +2,22 @@ import React from 'react'
 import Box from '~/atoms/Box'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
+import { Food } from '~/models/database'
 import { colors } from '~/themes/colors'
 
-const ItemFoodsOrder = ({ food, main, onShowFoodOption }) => {
+interface Props {
+    food: any
+    main: boolean,
+    onShowFoodOption: (food: Food) => void
+    onShowModalDelete: (food: Food) => void
+}
+
+const ItemFoodsOrder = ({
+    food,
+    main,
+    onShowFoodOption,
+    onShowModalDelete,
+}: Props) => {
     if (food.amount < 1) {
         return null
     }
@@ -12,6 +25,7 @@ const ItemFoodsOrder = ({ food, main, onShowFoodOption }) => {
     return (
         <TouchOpacity
             onPress={() => onShowFoodOption && onShowFoodOption(food)}
+            onLongPress={() => onShowModalDelete(food)}
             disabled={!main}
             w={'100%'}
             pl={main ? 10 : 15}

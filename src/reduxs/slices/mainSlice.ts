@@ -1,8 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Alert } from "react-native";
+import { Food } from "~/models/database";
 import { Area } from "~/servers/databases/areas";
-import { Food } from "~/servers/databases/foods";
 import { Table } from "~/servers/databases/tables";
+import { generateTimestampId } from "~/utils/date";
 
 interface MainSlice {
     areas: Area[]
@@ -433,8 +434,8 @@ const mainSlice = createSlice({
         doneSelectFoodOption: (state) => {
             const error = handleCheckDoneSelectFoodOption(state, 'foodOption')
             if (error) return
-
-            state.orderPending.push(state.foodOption)
+            const _idOrder = generateTimestampId()
+            state.orderPending.push({ ...state.foodOption, _idOrder})
             state.foodOption = null
         },
         doneSelectFoodOptionChild: (state, action) => {
@@ -485,7 +486,8 @@ const mainSlice = createSlice({
             })
         },
         addFoodToOrderPending: (state, action) => {
-            state.orderPending.push(action.payload)
+            const _idOrder = generateTimestampId()
+            state.orderPending.push({ ...action.payload, _idOrder })
         },
         changeNoteFoodOption: (state, action) => {
             state.foodOption = { ...state.foodOption, note: action.payload }
@@ -498,14 +500,21 @@ const mainSlice = createSlice({
             state.foodOptionUpdate = action.payload
         },
         updateFoodOrderPending: (state) => {
+            const error = handleCheckDoneSelectFoodOption(state, 'foodOptionUpdate')
+            if (error) return
+
             state.orderPending = state.orderPending.map((item) => {
-                if (item._id === state.foodOptionUpdate._id) {
+                if (item._idOrder === state.foodOptionUpdate._idOrder) {
                     return state.foodOptionUpdate
                 }
                 return item
             })
             state.foodOptionUpdate = null
         },
+        deleteFoodOrder: (state, action) => {
+            const foodDelete = action.payload
+            state.orderPending = state.orderPending.filter((order) => order._idOrder !== foodDelete._idOrder)
+        }
     },
     extraReducers: builder => { }
 })
@@ -553,6 +562,7 @@ export const {
     changeNoteFoodOptionChild,
     setFoodOptionUpdate,
     updateFoodOrderPending,
+    deleteFoodOrder
 } = mainSlice.actions
 
 export default mainSlice.reducer

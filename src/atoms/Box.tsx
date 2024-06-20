@@ -1,5 +1,5 @@
 import React from 'react';
-import { DimensionValue, StyleProp, TextStyle, View, ViewProps, ViewStyle } from 'react-native';
+import { DimensionValue, StyleProp, View, ViewProps, ViewStyle } from 'react-native';
 
 interface Props {
     f?: number
@@ -7,6 +7,8 @@ interface Props {
     h?: DimensionValue
     mw?: DimensionValue
     mh?: DimensionValue
+    minW?: DimensionValue
+    minH?: DimensionValue
     row?: boolean
     m?: number
     mx?: number
@@ -30,8 +32,8 @@ interface Props {
     as?: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';
     position?: 'absolute' | 'relative'
     top?: number
-    right?: number 
-    bottom?: number 
+    right?: number
+    bottom?: number
     left?: number
     center?: boolean
     jc?: "flex-start" | "flex-end" | "center" | "space-between" | "space-around" | "space-evenly"
@@ -56,6 +58,8 @@ const Box: React.FC<Props & ViewProps> = ({
     h,
     mw,
     mh,
+    minW,
+    minH,
     row,
     m,
     mx,
@@ -76,8 +80,8 @@ const Box: React.FC<Props & ViewProps> = ({
     gap,
     position,
     top,
-    right, 
-    bottom, 
+    right,
+    bottom,
     left,
     wrap,
     ai,
@@ -106,6 +110,8 @@ const Box: React.FC<Props & ViewProps> = ({
             height: h,
             maxWidth: mw,
             maxHeight: mh,
+            minWidth: minW,
+            minHeight: minH,
             margin: m,
             marginHorizontal: mx,
             marginVertical: my,
@@ -125,8 +131,8 @@ const Box: React.FC<Props & ViewProps> = ({
             gap,
             position,
             top,
-            right, 
-            bottom, 
+            right,
+            bottom,
             left,
             alignItems: ai,
             alignSelf: as,
@@ -146,7 +152,7 @@ const Box: React.FC<Props & ViewProps> = ({
         row && { flexDirection: 'row' },
         wrap && { flexWrap: 'wrap' },
         center && { alignItems: 'center', justifyContent: 'center' },
-        (!f && !as)&& { alignSelf: 'flex-start' }
+        (!f && !as) && { alignSelf: 'flex-start' }
     ]
 
     return (

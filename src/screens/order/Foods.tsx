@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ScrollView } from 'react-native'
 import Box from '~/atoms/Box'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { ResponsiveOrder } from '~/models/responsive'
 import { foodOptionMainSelector, foodsMainSelector } from '~/reduxs/selectors/mainSelector'
-import { Food } from '~/servers/databases/foods'
+import { addFoodToOrderPending, setFoodOption } from '~/reduxs/slices/mainSlice'
+import { getFoodDetailApi } from '~/servers/databases/api/orderApi'
 import { colors } from '~/themes/colors'
 import ItemFood from './ItemFood'
 import ModalFoodOption from './ModalFoodOption'
-import { getFoodDetailApi } from '~/servers/databases/api/orderApi'
-import { addFoodToOrderPending, doneSelectFoodOption, setFoodOption } from '~/reduxs/slices/mainSlice'
+import { Food } from '~/models/database'
 
 interface Props {
   useResponsive: ResponsiveOrder
@@ -24,6 +24,7 @@ const Foods = ({ useResponsive }: Props) => {
   // Event khi user nhấn vào ItemFood
   const handleChooseFood = (food: Food) => {
     const foodOptionService = getFoodDetailApi(food)
+    console.log('foodOptionService: ', JSON.stringify(foodOptionService))
     if (foodOptionService?.options?.length > 0) {
       dispatch(setFoodOption(foodOptionService))
     } else {
