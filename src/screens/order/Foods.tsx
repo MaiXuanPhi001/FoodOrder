@@ -24,8 +24,7 @@ const Foods = ({ useResponsive }: Props) => {
   // Event khi user nhấn vào ItemFood
   const handleChooseFood = (food: Food) => {
     const foodOptionService = getFoodDetailApi(food)
-    console.log('foodOptionService: ', JSON.stringify(foodOptionService))
-    if (foodOptionService?.options?.length > 0) {
+    if (foodOptionService.options && foodOptionService.options?.length > 0) {
       dispatch(setFoodOption(foodOptionService))
     } else {
       dispatch(addFoodToOrderPending(foodOptionService))
@@ -36,14 +35,15 @@ const Foods = ({ useResponsive }: Props) => {
     <Box w={useResponsive.widthFoods} h={useResponsive.heighFoods} bg={colors.gray}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}>
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <Box
           row
           wrap
           p={useResponsive.padding}
           gap={useResponsive.gap}
         >
-          {foods.map((food: Food) =>
+          {foods.map((food) =>
             <ItemFood
               key={food._id}
               food={food}
@@ -53,12 +53,12 @@ const Foods = ({ useResponsive }: Props) => {
           )}
         </Box>
       </ScrollView>
-      {foodOption &&
+      {foodOption ?
         <ModalFoodOption
           dispatch={dispatch}
           foodOption={foodOption}
           isShow={foodOption !== null}
-        />
+        /> : <></>
       }
     </Box>
   )

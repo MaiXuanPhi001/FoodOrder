@@ -11,6 +11,7 @@ import { Food } from '~/models/database'
 const FoodsOrder = () => {
     const dispatch = useAppDispatch()
     const orderPending = useAppSelector(orderPendingMainSelector)
+    console.log('orderPending: ', JSON.stringify(orderPending))
     const foodOptionUpdate = useAppSelector(foodOptionUpdateMainSelector)
     const [foodDelete, setFoodDelete] = useState<Food | null>(null)
 

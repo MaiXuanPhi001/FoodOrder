@@ -1,6 +1,7 @@
-import { OptionFood } from "~/models/database";
 
-export const optionFoods: OptionFood[] = [
+import { Option } from "~/models/food";
+
+export const optionFoods: Option[] = [
     {
         _id: 0,
         title: 'Cấp độ',

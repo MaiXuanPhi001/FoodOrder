@@ -9,20 +9,21 @@ import Input from '~/atoms/Input'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
 import Modality from '~/components/Modality'
+import { FoodOption, Ingredient, Option } from '~/models/food'
 import { colors } from '~/themes/colors'
 import { numberCommas } from '~/utils/convertNumber'
 import { getImageByFoodType } from '~/utils/images'
 
 interface Props {
     isShow: boolean
-    foodOption: any
+    foodOption: FoodOption
     dispatch: Dispatch<UnknownAction>
     onCloseModal: () => void
-    onAddIngredientsToFood: (ingredient, option) => void
+    onAddIngredientsToFood: (ingredient: Ingredient, option: Option) => void
     onDoneSelectFoodOption: () => void
     onChangeAmountFoodOption: (type: 'plus' | 'minus') => void
     onChangeNoteFoodOption: (text: string) => void
-    onRemoveIngredientsFoodOption: (ingredient, option) => void
+    onRemoveIngredientsFoodOption: (ingredient: Ingredient, option: Option) => void
     children?: React.JSX.Element
 }
 
@@ -90,15 +91,14 @@ const ModalContainer = ({
                             h={35}
                         />
                     </Box>
-
-                    {foodOption.options.map((option) => (
+                    {foodOption.options?.map((option) => (
                         <Box key={option._id} w={'100%'}>
                             <Box row w={'100%'} bg={colors.gray3} jc='space-between' px={10}>
                                 <Txt>{option.title}</Txt>
                                 <Txt>Số lượng: {option.maxChoose * foodOption.amount}</Txt>
                             </Box>
                             <Box row my={10}>
-                                {option.ingredients.map((ingredient) => (
+                                {option.ingredients?.map((ingredient) => (
                                     <TouchOpacity
                                         onPress={() => onAddIngredientsToFood(ingredient, option)}
                                         key={ingredient._id}

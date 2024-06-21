@@ -1,4 +1,6 @@
-export const ingredients = [
+import { Ingredient } from "~/models/database";
+
+export const ingredients: Ingredient[] = [
     {
         _id: 0,
         _idOptionFood: 0,
