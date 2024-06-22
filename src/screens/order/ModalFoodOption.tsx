@@ -88,12 +88,12 @@ const ModalFoodOption = ({ isShow, foodOption, dispatch }: Props) => {
             onChangeNoteFoodOption={handleChangeNoteFoodOption}
             onRemoveIngredientsFoodOption={handleRemoveIngredientsFoodOption}
         >
-            {foodOptionChild &&
+            {foodOptionChild ?
                 <ModalFoodOptionChild
                     dispatch={dispatch}
                     foodOption={foodOptionChild}
                     isShow={foodOption !== null}
-                />
+                /> : <></>
             }
         </ModalContainer>
     )

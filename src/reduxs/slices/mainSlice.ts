@@ -1,10 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Alert } from "react-native";
-import { Food } from "~/models/database";
 import { FoodOption, Option } from "~/models/food";
-import { MainSlice, PayloadAddIngredientToFoodOption, PayloadSetAreas, PayloadSetFoodOptionChild } from "~/models/mainSlicePayloadAction";
+import { FoodOptionObject, MainSlice, PayloadAddIngredientToFoodOption, PayloadPlusOrMinusFoodOptionChild, PayloadSetAreas, PayloadSetFoodOptionChild } from "~/models/mainSlicePayloadAction";
 import { Area } from "~/servers/databases/areas";
-import { Table } from "~/servers/databases/tables";
 import { generateTimestampId } from "~/utils/date";
 
 const initialState: MainSlice = {
@@ -52,8 +50,8 @@ const mainSlice = createSlice({
         },
         addIngredientToFoodOption: (state, action: PayloadAction<PayloadAddIngredientToFoodOption>) => {
             const { ingredientChoose, optionChoose, fieldName } = action.payload
-            const amountFoodOption = state[fieldName].amount
-            state[fieldName].options.forEach((option: Option) => {
+            const amountFoodOption = state[fieldName]?.amount || 0
+            state[fieldName]?.options?.forEach((option: Option) => {
                 if (option._id === optionChoose._id) {
                     let sum = 0
                     option.ingredients?.forEach(ingredient => {
@@ -70,16 +68,18 @@ const mainSlice = createSlice({
                 }
             })
         },
-        plusOrMinusFoodOptionChild: (state, action) => {
+        plusOrMinusFoodOptionChild: (state, action: PayloadAction<PayloadPlusOrMinusFoodOptionChild>) => {
             const { type, fieldName } = action.payload
             const fieldFoodOption = fieldName === 'foodOptionChild' ? 'foodOption' : 'foodOptionUpdate'
-            const amountFoodOption = state[fieldFoodOption].amount
+            const amountFoodOption = state[fieldFoodOption]?.amount || 0
             if (type === 'plus') {
-                const amountCurrent = state[fieldName].amount + 1
-                state[fieldFoodOption].options.forEach((option) => {
-                    if (option._id === state.optionChoose._id) {
-                        if (amountCurrent <= (option.maxChoose * amountFoodOption)) {
-                            state[fieldName].amount = amountCurrent
+                const amountCurrent = state[fieldName]?.amount || 0 + 1
+                state[fieldFoodOption]?.options?.forEach((option) => {
+                    if (state.optionChoose) {
+                        if (option._id === state.optionChoose._id) {
+                            if (amountCurrent <= (option.maxChoose * amountFoodOption)) {
+                                state[fieldName].amount = amountCurrent
+                            }
                         }
                     }
                 })
@@ -94,10 +94,12 @@ const mainSlice = createSlice({
             const error = handleCheckDoneSelectFoodOption(state, 'foodOption')
             if (error) return
             const _idOrder = generateTimestampId()
-            state.orderPending.push({ ...state.foodOption, _idOrder})
-            state.foodOption = null
+            if (state.foodOption) {
+                state.orderPending.push({ ...state.foodOption, _idOrder })
+                state.foodOption = null
+            }
         },
-        doneSelectFoodOptionChild: (state, action) => {
+        doneSelectFoodOptionChild: (state, action: PayloadAction<keyof MainSlice>) => {
             const fieldChild = action.payload
             const error = handleCheckDoneSelectFoodOption(state, fieldChild)
             if (error) return
@@ -106,11 +108,12 @@ const mainSlice = createSlice({
             let sumAmountIngredients = 0
             let position = -1
 
-            const fieldParent = fieldChild === 'foodOptionChild' ? 'foodOption' : 'foodOptionUpdate'
+            const fieldParent: keyof MainSlice =
+                fieldChild === 'foodOptionChild' ? 'foodOption' : 'foodOptionUpdate'
 
-            state[fieldParent].options.forEach((option) => {
+            state[fieldParent].options.forEach((option: Option) => {
                 if (option._id === state.optionChoose._id) {
-                    option.ingredients.forEach((ingredient, index) => {
+                    option.ingredients?.forEach((ingredient, index) => {
                         if (ingredient.food._id !== state[fieldChild]._id) {
                             sumAmountIngredients += ingredient.food.amount
                         }
@@ -123,7 +126,9 @@ const mainSlice = createSlice({
                     if ((sumAmountIngredients + amountFoodOptionChild) > (state.optionChoose.maxChoose * state[fieldParent].amount)) {
                         Alert.alert('Vượt quá số lượng món trong một mục')
                     } else {
-                        option.ingredients[position].food = state[fieldChild]
+                        if (option.ingredients) {
+                            option.ingredients[position].food = state[fieldChild]
+                        }
                     }
                     state[fieldChild] = null
                 }
@@ -131,7 +136,7 @@ const mainSlice = createSlice({
         },
         removeIngredientOfFoodOption: (state, action: PayloadAction<PayloadAddIngredientToFoodOption>) => {
             const { ingredientChoose, optionChoose, fieldName } = action.payload
-            state[fieldName].options.forEach((option: Option) => {
+            state[fieldName]?.options?.forEach((option: Option) => {
                 if (option._id === optionChoose._id) {
                     option.ingredients?.forEach((ingredient) => {
                         if (ingredient._id === ingredientChoose._id) {
@@ -179,21 +184,22 @@ const mainSlice = createSlice({
 })
 
 // Hàm check xem chọn đủ thành phần của một món ăn chưa, vd: mì cay phải chọn cấp độ mới cho hoàn thành
-const handleCheckDoneSelectFoodOption = (state: MainSlice, fieldName: keyof MainSlice) => {
+const handleCheckDoneSelectFoodOption = (state: MainSlice, fieldName: keyof FoodOptionObject) => {
     let error = false
-    if (state[fieldName].amount < 1) {
+    const amount = state[fieldName]?.amount || 0
+    if (amount < 1) {
         Alert.alert('Số lượng món phải lớn hơn 0')
         return
     }
 
-    state[fieldName].options.forEach((option) => {
+    state[fieldName]?.options?.forEach((option) => {
         const maxChoose = option.maxChoose
         let sumAmountIngredients = 0
-        option.ingredients.forEach((ingredient) => {
+        option.ingredients?.forEach((ingredient) => {
             sumAmountIngredients += ingredient.food.amount
         })
 
-        if (sumAmountIngredients !== (maxChoose * state[fieldName].amount)) {
+        if (sumAmountIngredients !== (maxChoose * amount)) {
             error = true
         }
     })

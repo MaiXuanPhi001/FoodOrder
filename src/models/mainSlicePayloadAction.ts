@@ -4,18 +4,21 @@ import { Table } from "~/servers/databases/tables";
 import { Food } from "./database";
 import { OrderPending } from "./order";
 
-export interface MainSlice {
+export interface FoodOptionObject {
+    foodOption: FoodOption | null
+    foodOptionChild: FoodOption | null
+    foodOptionUpdate: FoodOption | null
+    foodOptionUpdateChild: FoodOption | null
+}
+
+export interface MainSlice extends FoodOptionObject {
     areas: Area[]
     tables: Table[]
     foods: Food[]
     areaChoose: Area | undefined
     orderedTab: 'orderPending' | 'ordered'
-    foodOption: FoodOption | null
-    foodOptionChild: any
-    optionChoose: any
+    optionChoose: Option | null
     orderPending: OrderPending[]
-    foodOptionUpdate: any
-    foodOptionUpdateChild: any
 }
 
 export interface PayloadSetAreas {
@@ -25,13 +28,18 @@ export interface PayloadSetAreas {
 }
 
 export interface PayloadSetFoodOptionChild {
-    foodOptionChild: FoodOption
-    optionChoose: Option
-    fieldName: keyof MainSlice
+    foodOptionChild: FoodOption | null
+    optionChoose: Option | null
+    fieldName: keyof FoodOptionObject
 }
 
 export interface PayloadAddIngredientToFoodOption {
     ingredientChoose: Ingredient
     optionChoose: Option
-    fieldName: keyof MainSlice
+    fieldName: keyof FoodOptionObject
+}
+
+export interface PayloadPlusOrMinusFoodOptionChild {
+    type: 'plus' | 'minus',
+    fieldName: keyof FoodOptionObject,
 }
