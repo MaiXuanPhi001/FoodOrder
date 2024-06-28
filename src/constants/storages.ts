@@ -1,5 +1,6 @@
 export const storages = {
     areas: 'areas',
     tables: 'tables',
-    foods: 'foods'
+    foods: 'foods',
+    ordered: 'ordered'
 }

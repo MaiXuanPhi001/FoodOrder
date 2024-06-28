@@ -35,6 +35,7 @@ interface Props {
     borderTopRightRadius?: number
     borderBottomRightRadius?: number
     borderBottomLeftRadius?: number
+    borderBottomWidth?: number
     borderWidth?: number
     borderColor?: string
     zIndex?: number
@@ -74,6 +75,7 @@ const Input: React.FC<Props & TextInputProps> = ({
     borderTopRightRadius,
     borderBottomRightRadius,
     borderBottomLeftRadius,
+    borderBottomWidth,
     borderWidth,
     borderColor,
     zIndex,
@@ -115,6 +117,7 @@ const Input: React.FC<Props & TextInputProps> = ({
             borderTopRightRadius,
             borderBottomRightRadius,
             borderBottomLeftRadius,
+            borderBottomWidth,
             borderWidth,
             borderColor,
             zIndex,

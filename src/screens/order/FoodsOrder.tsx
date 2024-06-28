@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { foodOptionUpdateMainSelector, orderPendingMainSelector } from '~/reduxs/selectors/mainSelector'
 import { setFoodOptionUpdate } from '~/reduxs/slices/mainSlice'
-import ItemFoodsOrder from './ItemFoodsOrder'
+import ItemFoodsOrderPending from './ItemFoodsOrderPending'
 import ModalFoodOptionUpdate from './ModalFoodOptionUpdate'
 import ModalDeleteFoodOrder from './ModalDeleteFoodOrder'
 import { Food } from '~/models/database'
@@ -11,7 +11,6 @@ import { Food } from '~/models/database'
 const FoodsOrder = () => {
     const dispatch = useAppDispatch()
     const orderPending = useAppSelector(orderPendingMainSelector)
-    console.log('orderPending: ', JSON.stringify(orderPending))
     const foodOptionUpdate = useAppSelector(foodOptionUpdateMainSelector)
     const [foodDelete, setFoodDelete] = useState<Food | null>(null)
 
@@ -29,7 +28,7 @@ const FoodsOrder = () => {
             showsVerticalScrollIndicator={false}
         >
             {orderPending.map((food: Food) =>
-                <ItemFoodsOrder
+                <ItemFoodsOrderPending
                     key={food._id + Math.random()}
                     food={food}
                     main={true}

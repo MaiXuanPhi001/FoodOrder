@@ -10,3 +10,4 @@ export const foodOptionChildMainSelector = (state: RootState) => state.main.food
 export const orderPendingMainSelector = (state: RootState) => state.main.orderPending
 export const foodOptionUpdateMainSelector = (state: RootState) => state.main.foodOptionUpdate
 export const foodOptionUpdateChildMainSelector = (state: RootState) => state.main.foodOptionUpdateChild
+export const searchKeyFoodsMainSelector = (state: RootState) => state.main.searchKeyFoods

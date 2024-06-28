@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import { FoodOption, Option } from "~/models/food";
 import { FoodOptionObject, MainSlice, PayloadAddIngredientToFoodOption, PayloadPlusOrMinusFoodOptionChild, PayloadSetAreas, PayloadSetFoodOptionChild } from "~/models/mainSlicePayloadAction";
 import { Area } from "~/servers/databases/areas";
+import { replaceName } from "~/utils/convertString";
 import { generateTimestampId } from "~/utils/date";
 
 const initialState: MainSlice = {
@@ -16,7 +17,8 @@ const initialState: MainSlice = {
     optionChoose: null,
     orderPending: [],
     foodOptionUpdate: null,
-    foodOptionUpdateChild: null
+    foodOptionUpdateChild: null,
+    searchKeyFoods: '',
 }
 
 const mainSlice = createSlice({
@@ -178,7 +180,10 @@ const mainSlice = createSlice({
         deleteFoodOrder: (state, action) => {
             const foodDelete = action.payload
             state.orderPending = state.orderPending.filter((order) => order._idOrder !== foodDelete._idOrder)
-        }
+        },
+        setSearchKeyFoods: (state, action: PayloadAction<string>) => {
+            state.searchKeyFoods = action.payload
+        },
     },
     extraReducers: builder => { }
 })
@@ -227,7 +232,8 @@ export const {
     changeNoteFoodOptionChild,
     setFoodOptionUpdate,
     updateFoodOrderPending,
-    deleteFoodOrder
+    deleteFoodOrder,
+    setSearchKeyFoods,
 } = mainSlice.actions
 
 export default mainSlice.reducer

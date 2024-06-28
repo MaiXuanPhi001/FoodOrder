@@ -3,16 +3,17 @@ import Box from '~/atoms/Box'
 import TouchOpacity from '~/atoms/TouchOpacity'
 import Txt from '~/atoms/Txt'
 import { Food } from '~/models/database'
+import { Option } from '~/models/food'
 import { colors } from '~/themes/colors'
 
 interface Props {
     food: any
-    main: boolean,
-    onShowFoodOption: (food: Food) => void
-    onShowModalDelete: (food: Food) => void
+    main?: boolean,
+    onShowFoodOption?: (food: Food) => void
+    onShowModalDelete?: (food: Food) => void
 }
 
-const ItemFoodsOrder = ({
+const ItemFoodsOrderPending = ({
     food,
     main,
     onShowFoodOption,
@@ -25,7 +26,7 @@ const ItemFoodsOrder = ({
     return (
         <TouchOpacity
             onPress={() => onShowFoodOption && onShowFoodOption(food)}
-            onLongPress={() => onShowModalDelete(food)}
+            onLongPress={() => onShowModalDelete && onShowModalDelete(food)}
             disabled={!main}
             w={'100%'}
             pl={main ? 10 : 15}
@@ -50,10 +51,10 @@ const ItemFoodsOrder = ({
                 </Box>
             </Box>
 
-            {food?.options?.map((option) => (
+            {food?.options?.map((option: Option) => (
                 <Box key={option._id}>
-                    {option.ingredients.map((ingredient) => (
-                        <ItemFoodsOrder
+                    {option.ingredients?.map((ingredient) => (
+                        <ItemFoodsOrderPending
                             key={`${option._id}${ingredient._id}${ingredient.food._id}`}
                             food={ingredient.food}
                         />
@@ -64,4 +65,4 @@ const ItemFoodsOrder = ({
     )
 }
 
-export default ItemFoodsOrder
+export default ItemFoodsOrderPending

@@ -1,11 +1,11 @@
 import React from 'react'
 import Box from '~/atoms/Box'
-import { ResponsiveOrder } from '~/models/responsive'
-import { colors } from '~/themes/colors'
-import TabOrder from './TabOrder'
-import FoodsOrder from './FoodsOrder'
 import { useAppSelector } from '~/hooks/redux'
+import { ResponsiveOrder } from '~/models/responsive'
 import { orderedTabMainSelector } from '~/reduxs/selectors/mainSelector'
+import { colors } from '~/themes/colors'
+import FoodsOrder from './FoodsOrder'
+import TabOrder from './TabOrder'
 
 interface Props {
     useResponsive: ResponsiveOrder

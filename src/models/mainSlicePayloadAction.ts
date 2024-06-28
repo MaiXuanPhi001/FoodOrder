@@ -19,6 +19,7 @@ export interface MainSlice extends FoodOptionObject {
     orderedTab: 'orderPending' | 'ordered'
     optionChoose: Option | null
     orderPending: OrderPending[]
+    searchKeyFoods: string
 }
 
 export interface PayloadSetAreas {

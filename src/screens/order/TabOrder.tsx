@@ -13,26 +13,29 @@ interface Props {
 const TabOrder = ({ orderedTab }: Props) => {
     const dispatch = useAppDispatch()
 
+    const tabOrdered = orderedTab === 'ordered'
 
     return (
-        <Box row borderColor={colors.background} borderWidth={1} m={5} p={5}>
+        <Box row borderColor={colors.background} borderWidth={1} m={5}>
             <TouchOpacity
                 onPress={() => dispatch(setOrderedTab('orderPending'))}
                 f={1}
                 center
-                bg={!orderedTab ? colors.background : colors.white}
+                p={5}
+                bg={!tabOrdered ? colors.background : colors.white}
             >
-                <Txt color={!orderedTab ? colors.white : colors.black} bold>
+                <Txt color={!tabOrdered ? colors.white : colors.black} bold>
                     Món đang gọi
                 </Txt>
             </TouchOpacity>
             <TouchOpacity
                 onPress={() => dispatch(setOrderedTab('ordered'))}
                 f={1}
+                p={5}
                 center
-                bg={orderedTab ? colors.background : colors.white}
+                bg={tabOrdered ? colors.background : colors.white}
             >
-                <Txt color={orderedTab ? colors.white : colors.black} bold>
+                <Txt color={tabOrdered ? colors.white : colors.black} bold>
                     Món đã gọi
                 </Txt>
             </TouchOpacity>
